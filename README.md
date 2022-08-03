@@ -7,7 +7,9 @@
 
 ### Linux (ArchLinux / Manjaro Linux)
 
-### Windows
+- [sceenkey](./linux/sceenkey.md)
+
+### develop tools
 
 - [oh-my-zsh](./command-line/oh-my-zsh.md)
 
@@ -36,3 +38,7 @@
 - [screenfetch](./command-line/screenfetch.md)
 
 - [mosh](./command-line/mosh.md)
+
+
+### windows
+
