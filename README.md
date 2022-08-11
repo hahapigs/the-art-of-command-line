@@ -35,7 +35,7 @@
 
 - [powerlevel10k](./command/powerlevel10k.md)
 
-  
+- [tmux](./command/tmux.md)  
 
 ### Mac OS X
 
