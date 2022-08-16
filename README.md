@@ -37,6 +37,11 @@
 
 - [tmux](./command/tmux.md)  
 
+- [httpie](./command/httpie.md)
+
+- [mtr](./command/mtr.md)
+
+
 ### Mac OS X
 
 - [Homebrew](./mac/homebrew.md)
