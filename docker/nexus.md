@@ -12,7 +12,7 @@ $ docker iamges
 ### 创建容器
 ```powershell
 # 创建容器
-$ docker run -d --name nexus -p 8888:8081 -v /Users/zhaohongliang/nexus/nexus-data:/nexus-data  --restart=always --privileged=true sonatype/nexus3
+$ docker run -d --name nexus -p 8888:8081 -v /alibaba/nexus/nexus-data:/nexus-data  --restart=always --privileged=true sonatype/nexus3
 
 # 查看创建容器是否成功
 $ docker ps -a
@@ -35,7 +35,7 @@ $ docker logs -f nexus
 $ cat ~/nexus/nexus-data/admin.properties
 ```
 
-注意：如果要更改 nexus 容器的默认端口，可以执行如下操作：
+注意：如果要更改 nexus 容器的默认端口，可以执行如下操作：<br />方法一：
 ```powershell
 # 进入容器
 $ docker exec -it 容器ID /bin/bash
@@ -44,6 +44,7 @@ $ docker exec -it 容器ID /bin/bash
 $ apt-get update
 $ apt-get install vim
 ```
+方法二：
 ```powershell
 # 如果在有宽带网络的情况下，可以将文件 copy 出来，编辑完成后重新放回到容器中
 $ docker cp nexus:/opt/sonatype/nexus/etc/nexus-default.properties ~/Desktop
