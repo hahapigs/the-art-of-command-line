@@ -35,7 +35,7 @@ $ docker logs -f nexus
 $ cat ~/nexus/nexus-data/admin.properties
 ```
 
-注意：如果要更改 nexus 容器的默认端口，可以执行如下操作：<br />方法一：
+**注意：如果要更改 nexus 容器的默认端口，可以执行如下操作：**<br />方法一：
 ```powershell
 # 进入容器
 $ docker exec -it 容器ID /bin/bash
