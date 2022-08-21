@@ -79,7 +79,7 @@ Repositories >> Create repository >> maven2 (group)
 ```powershell
 Security >> Roles >> Create Role
 ```
-注意：选择 **Privilieges **要添加 nx-repository-view-maven2-*edit 权限，如果没有该权限会导致 maven 无法 deployee。关于 deployee 出现的异常如下：
+注意：选择 **Privilieges** 要添加 nx-repository-view-maven2-*edit 权限，如果没有该权限会导致 maven 无法 deployee。关于 deployee 出现的异常如下：
 ```powershell
 If an artifact fails to deploy from Maven (or other build tools) make note of the HTTP status code returned.  Then check below to see what the code means, and how to diagnose and fix the issue.
 
