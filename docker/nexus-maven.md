@@ -72,12 +72,14 @@ Repositories >> Create repository >> maven2 (proxy)
 ```powershell
 Repositories >> Create repository >> maven2 (group)
 ```
-注意：设置 **Group >> Member repositories** 要添加之前设置过的所有宿主仓库和代理仓库<br />![](https://cdn.nlark.com/yuque/0/2022/jpeg/725923/1661096980698-d46b0162-33e5-4e23-9b18-96f428356b47.jpeg)
+注意：设置 **Group >> Member repositories** 要添加之前设置过的所有宿主仓库和代理仓库
+
+![](https://cdn.nlark.com/yuque/0/2022/jpeg/725923/1661096980698-d46b0162-33e5-4e23-9b18-96f428356b47.jpeg)
 ### 9、创建角色
 ```powershell
 Security >> Roles >> Create Role
 ```
-注意：选择 **Privileges **要添加 nx-repository-view-maven2-*edit 权限，如果没有该权限会导致 maven 无法 deployee。关于 deployee 出现的异常如下：
+注意：选择 **Privilieges **要添加 nx-repository-view-maven2-*edit 权限，如果没有该权限会导致 maven 无法 deployee。关于 deployee 出现的异常如下：
 ```powershell
 If an artifact fails to deploy from Maven (or other build tools) make note of the HTTP status code returned.  Then check below to see what the code means, and how to diagnose and fix the issue.
 
