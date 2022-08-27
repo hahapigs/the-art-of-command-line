@@ -3,35 +3,35 @@
 
 ### Terminal Tools
 
-- [oh-my-zsh](./command-line/oh-my-zsh.md)
+- [oh-my-zsh](./command/oh-my-zsh.md)
 
-- [lsd](./command-line/lsd.md)
+- [lsd](./command/lsd.md)
 
-- [colors](./command-line/colors.md)
+- [colors](./command/colors.md)
 
-- [wget](./command-line/wget.md)
+- [wget](./command/wget.md)
 
-- [curl](./command-line/curl.md)
+- [curl](./command/curl.md)
 
-- [ranger](./command-line/ranger.md)
+- [ranger](./command/ranger.md)
 
 - [top](./command/top.md)
 
-- [htop](./command-line/htop.md)
+- [htop](./command/htop.md)
 
-- [glances](./command-line/glances.md)
+- [glances](./command/glances.md)
 
-- [axel](./command-line/axel.md)
+- [axel](./command/axel.md)
 
-- [mycli](./command-line/mycli.md)
+- [mycli](./command/mycli.md)
 
-- [mysqlsh](./command-line/mysqlsh.md)
+- [mysqlsh](./command/mysqlsh.md)
 
-- [neofetch](./command-line/neofetch.md)
+- [neofetch](./command/neofetch.md)
 
-- [screenfetch](./command-line/screenfetch.md)
+- [screenfetch](./command/screenfetch.md)
 
-- [mosh](./command-line/mosh.md)
+- [mosh](./command/mosh.md)
 
 - [powerlevel10k](./command/powerlevel10k.md)
 
