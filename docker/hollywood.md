@@ -1,5 +1,3 @@
-**玩归玩，闹归闹，别拿终端开玩笑**<br />**欢迎大家阅读 《玩转终端》系列笔记**
-
 #### docker 安装方式
 [**bcbcarl/hollywood**](https://github.com/bcbcarl/docker-hollywood/blob/master/README.md)
 ```powershell
