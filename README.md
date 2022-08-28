@@ -13,6 +13,8 @@
 
 - [curl](./command/curl.md)
 
+- [httpie](./command/httpie.md)
+    
 - [ranger](./command/ranger.md)
 
 - [top](./command/top.md)
@@ -58,3 +60,5 @@
 - [nexus](./docker/nexus.md)
 
 - [gitlab](./docker/gitlab.md)
+
+- [hollywood](./docker/hollywood.md)
