@@ -1,7 +1,3 @@
-**玩归玩，闹归闹，别拿终端开玩笑**<br />**欢迎大家阅读 《玩转终端》系列笔记**
-
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/725923/1619527705595-e140b192-5947-44a0-a6c9-f4c48fb4809f.png#height=1080&id=u45f34dba&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1080&originWidth=1920&originalType=binary&ratio=1&size=214419&status=done&style=none&width=1920)
-
 ### [GitHub](https://github.com/athityakumar/colorls)
 
 #### Mac OS X 安装
