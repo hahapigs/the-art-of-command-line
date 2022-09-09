@@ -43,6 +43,11 @@
 
 - [mtr](./command/mtr.md)
 
+- [vim](./command/vim.md)
+
+- [vim-plus](./command/vim-plus.md)
+
+- [neovim](./command/neovim.md)
 
 ### Mac OS X
 
