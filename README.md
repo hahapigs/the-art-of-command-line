@@ -49,6 +49,8 @@
 
 - [neovim](./command/neovim.md)
 
+- [git](./command/git.md)
+
 ### Mac OS X
 
 - [Homebrew](./mac/homebrew.md)
