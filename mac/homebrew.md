@@ -1,16 +1,4 @@
-**没有金刚钻儿，不揽瓷器活儿！**<br />**欢迎大家阅读 《金刚钻》系列笔记**<br />**<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599888092879-9756a40a-911c-4c27-88c5-3912fd7b8336.png#align=left&display=inline&height=562&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1124&originWidth=1686&size=2626801&status=done&style=none&width=843)
-
-<a name="bGVTK"></a>
-## 介绍
-Homebrew（[官网](https://brew.sh/index_zh-cn)） 是一个 macOS（或Linux）的包管理器，可以用它来安装你需要的软件，方便卸载跟升级。
-
-Mac OS 安装包不同于 Windows，常用的有 .dmg 、.pkg 和 .prefPane，安装一般是通过 AppStore 或者官网链下载安装包进行安装。由于AppStore 审核的原因，部分软件不会在 AppStore 上架，所以只能通过官网链接下载安装。那么这样对于安装包管理和更新就带来了不便，通过homebrew 会帮助你解决这一个问题，对于开发的小伙伴来说十分方便。我对三种方式做了如下测评，综合上还是 Homebrew 在软件管理和维护上更胜一筹。
-
-| 安装方式 | 软件管理 | 软件更新速度 | 应用数量 |
-| --- | --- | --- | --- |
-| AppStore | 1 | 0.5 | 0.5 |
-| Homebrew | 1 | 0.8 | 0.8 |
-| 官网链接 | 0 | 1 | 1 |
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599888092879-9756a40a-911c-4c27-88c5-3912fd7b8336.png#align=left&display=inline&height=562&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1124&originWidth=1686&size=2626801&status=done&style=none&width=843)
 
 
 <a name="4Cr0v"></a>
@@ -65,7 +53,8 @@ $ /usr/bin/ruby ~/brew_install
 
 <a name="WbZuq"></a>
 #### 修改host地址后安装
-1、安装 Xcode 和 Command Line Tools for Xcode <br />Xcode 和 Command Line Tools for Xcode 可以通过 AppStore 安装，也可以通过终端安装，或者通过苹果 [developer](https://developer.apple.com/download/more/) 官网安装。
+1、安装 Xcode 和 Command Line Tools for Xcode 
+Xcode 和 Command Line Tools for Xcode 可以通过 AppStore 安装，也可以通过终端安装，或者通过苹果 [developer](https://developer.apple.com/download/more/) 官网安装。
 ```powershell
 # 删除已有的 commandLineTools
 $ sudo rm-rf/Library/Developer/CommandLineTools
@@ -74,7 +63,10 @@ $ xcode-select --install
 # 或者直接更新
 $ softwareupdate --all --install --force
 ```
-2、查阅真实IP<br />登录 [ipaddress](https://www.ipaddress.com/) 查询 _raw.githubusercontent.com _真实IP<br />![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599892918585-ff164af2-8e34-4327-b413-3868e6966114.png#align=left&display=inline&height=173&margin=%5Bobject%20Object%5D&name=image.png&originHeight=346&originWidth=848&size=31962&status=done&style=none&width=424)<br />3、修改 hosts 文件
+2、查阅真实IP
+登录 [ipaddress](https://www.ipaddress.com/) 查询 _raw.githubusercontent.com _真实IP
+![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599892918585-ff164af2-8e34-4327-b413-3868e6966114.png#align=left&display=inline&height=173&margin=%5Bobject%20Object%5D&name=image.png&originHeight=346&originWidth=848&size=31962&status=done&style=none&width=424)
+3、修改 hosts 文件
 ```powershell
 # 使用管理员权限打开 hosts文件
 $ sudo vim /private/etc/hosts
@@ -287,4 +279,8 @@ $ brew install --cask firefox
 ```
 
 
-相关阅读：<br />[【金刚钻】Mac OS X 上的效率工具 Alfred](https://www.yuque.com/docs/share/610bf65a-66f9-40cf-9a88-d8faad59d3c4?#)<br />[【一招鲜】Linux 系统下 docker 安装](https://www.yuque.com/docs/share/77dfdf77-0ff6-4a48-b81b-58c0df50d2fd?#)<br />[【一招鲜】Portainer 管理 docker](https://www.yuque.com/docs/share/ccb6215c-3c91-4459-9b27-8bccecb9fb98?#)<br />[【一招鲜】解决 xmrig 恶意挖矿程](https://www.yuque.com/docs/share/6428e7ab-e3af-47c9-a638-f1d00eb6ef53?#)
+相关阅读：
+[【金刚钻】Mac OS X 上的效率工具 Alfred](https://www.yuque.com/docs/share/610bf65a-66f9-40cf-9a88-d8faad59d3c4?#)
+[【一招鲜】Linux 系统下 docker 安装](https://www.yuque.com/docs/share/77dfdf77-0ff6-4a48-b81b-58c0df50d2fd?#)
+[【一招鲜】Portainer 管理 docker](https://www.yuque.com/docs/share/ccb6215c-3c91-4459-9b27-8bccecb9fb98?#)
+[【一招鲜】解决 xmrig 恶意挖矿程](https://www.yuque.com/docs/share/6428e7ab-e3af-47c9-a638-f1d00eb6ef53?#)
