@@ -1,5 +1,3 @@
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599888092879-9756a40a-911c-4c27-88c5-3912fd7b8336.png#align=left&display=inline&height=562&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1124&originWidth=1686&size=2626801&status=done&style=none&width=843)
-
 
 <a name="4Cr0v"></a>
 ## 安装
@@ -279,8 +277,3 @@ $ brew install --cask firefox
 ```
 
 
-相关阅读：
-[【金刚钻】Mac OS X 上的效率工具 Alfred](https://www.yuque.com/docs/share/610bf65a-66f9-40cf-9a88-d8faad59d3c4?#)
-[【一招鲜】Linux 系统下 docker 安装](https://www.yuque.com/docs/share/77dfdf77-0ff6-4a48-b81b-58c0df50d2fd?#)
-[【一招鲜】Portainer 管理 docker](https://www.yuque.com/docs/share/ccb6215c-3c91-4459-9b27-8bccecb9fb98?#)
-[【一招鲜】解决 xmrig 恶意挖矿程](https://www.yuque.com/docs/share/6428e7ab-e3af-47c9-a638-f1d00eb6ef53?#)
