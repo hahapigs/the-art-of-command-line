@@ -51,6 +51,8 @@
 
 - [git](./command/git.md)
 
+- [jenv](./command/jenv.md)
+
 ### Mac OS X
 
 - [Homebrew](./mac/homebrew.md)
