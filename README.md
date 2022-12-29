@@ -51,6 +51,8 @@
 
 - [git](./command/git.md)
 
+- [jdk](./command/jdk.md)
+
 - [jenv](./command/jenv.md)
 
 ### Mac OS X
