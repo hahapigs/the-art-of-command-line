@@ -39,6 +39,8 @@
 
 - [tmux](./command/tmux.md)  
 
+- [oh-my-tmux](./command/oh-my-tmux.md)
+    
 - [httpie](./command/httpie.md)
 
 - [mtr](./command/mtr.md)
@@ -54,6 +56,8 @@
 - [jdk](./command/jdk.md)
 
 - [jenv](./command/jenv.md)
+
+- [fig](./command/fig.md)
 
 ### Mac OS X
 
