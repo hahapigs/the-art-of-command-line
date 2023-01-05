@@ -9,6 +9,8 @@
 
 - [colors](./command/colors.md)
 
+- [tree](./command/tree.md)
+
 - [wget](./command/wget.md)
 
 - [curl](./command/curl.md)
