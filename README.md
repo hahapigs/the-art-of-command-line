@@ -9,6 +9,8 @@
 
 - [autojump](./command/autojump.md)
 
+- [exa](./command.exa.md)
+
 - [lsd](./command/lsd.md)
 
 - [colors](./command/colors.md)
