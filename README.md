@@ -37,6 +37,8 @@
 
 - [ctop](./command/ctop.md)
 
+- [btop](./command/ctop.md)
+
 - [htop](./command/htop.md)
 
 - [glances](./command/glances.md)
