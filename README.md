@@ -19,6 +19,8 @@
 
 - [curl](./command/curl.md)
 
+- [jq](./command/jq.md)
+
 - [httpie](./command/httpie.md)
     
 - [ranger](./command/ranger.md)
