@@ -22,7 +22,9 @@
 - [jq](./command/jq.md)
 
 - [httpie](./command/httpie.md)
-    
+
+- [fzf](./command/fzf.md)
+
 - [ranger](./command/ranger.md)
 
 - [top](./command/top.md)
