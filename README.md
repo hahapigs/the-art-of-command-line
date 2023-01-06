@@ -13,6 +13,8 @@
 
 - [pstree](./command/pstree.md)
 
+- [tldr](./command/tldr.md)
+
 - [wget](./command/wget.md)
 
 - [curl](./command/curl.md)
