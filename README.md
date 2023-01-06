@@ -17,6 +17,8 @@
 
 - [pstree](./command/pstree.md)
 
+- [procs](./command/procs.md)
+
 - [duf](./command/duf.md)
 
 - [dust](./command/dust.md)
