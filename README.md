@@ -11,6 +11,8 @@
 
 - [tree](./command/tree.md)
 
+- [pstree](./command/pstree.md)
+
 - [wget](./command/wget.md)
 
 - [curl](./command/curl.md)
