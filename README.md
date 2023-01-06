@@ -7,6 +7,8 @@
 
 - [z](./command/z.md)
 
+- [autojump](./command/autojump.md)
+
 - [lsd](./command/lsd.md)
 
 - [colors](./command/colors.md)
