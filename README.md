@@ -27,6 +27,8 @@
 
 - [ranger](./command/ranger.md)
 
+- [axel](./command/axel.md)
+
 - [top](./command/top.md)
 
 - [ctop](./command/ctop.md)
