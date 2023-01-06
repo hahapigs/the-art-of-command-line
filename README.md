@@ -5,6 +5,8 @@
 
 - [oh-my-zsh](./command/oh-my-zsh.md)
 
+- [z](./command/z.md)
+
 - [lsd](./command/lsd.md)
 
 - [colors](./command/colors.md)
