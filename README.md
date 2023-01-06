@@ -47,6 +47,8 @@
 
 - [htop](./command/htop.md)
 
+- [bpytop](./command/bpytop.md)
+
 - [bottom](./command/bottom.md)
 
 - [glances](./command/glances.md)
