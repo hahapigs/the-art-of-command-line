@@ -17,6 +17,10 @@
 
 - [pstree](./command/pstree.md)
 
+- [duf](./command/duf.md)
+
+- [dust](./command/dust.md)
+
 - [tldr](./command/tldr.md)
 
 - [wget](./command/wget.md)
@@ -40,6 +44,8 @@
 - [btop](./command/ctop.md)
 
 - [htop](./command/htop.md)
+
+- [bottom](./command/bottom.md)
 
 - [glances](./command/glances.md)
 
