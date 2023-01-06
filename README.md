@@ -23,6 +23,8 @@
 
 - [top](./command/top.md)
 
+- [ctop](./command/ctop.md)
+
 - [htop](./command/htop.md)
 
 - [glances](./command/glances.md)
