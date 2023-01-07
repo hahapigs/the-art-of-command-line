@@ -43,9 +43,9 @@
 
 - [top](./command/top.md)
 
-- [ctop](./command/ctop.md)
+- [btop](./command/btop.md)
 
-- [btop](./command/ctop.md)
+- [ctop](./command/ctop.md)
 
 - [htop](./command/htop.md)
 
