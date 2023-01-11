@@ -99,6 +99,8 @@
 
 - [mysql](./linux/mysql.md)
 
+- [node](./linux/node.md)
+
 - [sceenkey](./linux/sceenkey.md)
 
 
