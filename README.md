@@ -97,6 +97,8 @@
 
 ### Linux (ArchLinux / Manjaro Linux)
 
+- [mysql](./linux/mysql.md)
+
 - [sceenkey](./linux/sceenkey.md)
 
 
