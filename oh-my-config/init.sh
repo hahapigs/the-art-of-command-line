@@ -17,14 +17,24 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 # sh -c "$(fetch -o - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # install command
+
+# lsd
+brew install lsd
+
 # autojump
 brew install autojump
+
 # z
 brew install z
+
 # mtr
 brew install mtr
+
 # httpie
 brew isntall httpie
+
+# jq
+brew install jq
 
 
 
