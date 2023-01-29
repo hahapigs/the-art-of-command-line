@@ -13,7 +13,7 @@
 
 - [lsd](./command/lsd.md)
 
-- [colors](./command/colors.md)
+- [colorls](./command/colorls.md)
 
 - [tree](./command/tree.md)
 
