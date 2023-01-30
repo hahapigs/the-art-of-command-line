@@ -18,7 +18,7 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 
 # install command
 
-# lsd
+# lsd (lsd 和 colorls 安装一种即可，mac系统推荐安装lsd)
 brew install lsd
 
 # autojump
