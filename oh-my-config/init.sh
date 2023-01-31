@@ -18,6 +18,15 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 
 # install command
 
+# curl
+brew install curl
+
+# eget
+brew install wget
+
+# zsh
+brew install zsh
+
 # lsd (colorls在mac上安装需要先安装ruby，推荐安装lsd)
 brew install lsd
 
