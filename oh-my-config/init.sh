@@ -24,7 +24,7 @@ brew install lsd
 # autojump
 brew install autojump
 
-# z
+# z (autojump和z安装一种就可以)
 brew install z
 
 # mtr
