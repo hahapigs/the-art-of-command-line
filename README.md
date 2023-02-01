@@ -3,6 +3,8 @@
 
 ### Terminal Tools
 
+- [zsh](./command/zsh.md)
+
 - [oh-my-zsh](./command/oh-my-zsh.md)
 
 - [z](./command/z.md)
