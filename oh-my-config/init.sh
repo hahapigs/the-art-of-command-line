@@ -3,6 +3,16 @@
 # instarll brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
+# curl
+brew install curl
+
+# eget
+brew install wget
+
+# zsh
+brew install zsh
+
+
 # install oh-my-zsh
 # curl
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -16,7 +26,6 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 # fetch
 # sh -c "$(fetch -o - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# install command
 
 # curl
 brew install curl
