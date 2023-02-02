@@ -1,5 +1,6 @@
-#### Mac OS X 安装
+### Mac OS X 
 
+#### homebrew 安装
 ```powershell
 # 安装
 $ brew install jenv
