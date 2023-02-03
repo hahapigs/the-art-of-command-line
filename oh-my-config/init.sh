@@ -45,9 +45,16 @@ brew isntall httpie
 brew install jq
 
 
+# 禁止生成.DS_Store
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 
+# 恢复生成.DS_Store
+# defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 
-
+# 删除当前目录的.DS_Store
+# find . -name '.DS_Store' -type f -delete
+# 删除所有的.DS_Store
+# sudo find / -name '.DS_Store' --depth -exec rm {};
 
 
 
