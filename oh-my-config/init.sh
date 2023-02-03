@@ -6,7 +6,7 @@
 # curl
 brew install curl
 
-# eget
+# weget
 brew install wget
 
 # zsh
@@ -25,16 +25,6 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 
 # fetch
 # sh -c "$(fetch -o - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-
-# curl
-brew install curl
-
-# eget
-brew install wget
-
-# zsh
-brew install zsh
 
 # lsd (colorls在mac上安装需要先安装ruby，推荐安装lsd)
 brew install lsd
