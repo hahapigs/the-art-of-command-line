@@ -93,6 +93,8 @@
 
 - [fig](./command/fig.md)
 
+- [powerlevel10k](./command//powerlevel10k.md)
+
 ### Mac OS X
 
 - [Homebrew](./mac/homebrew.md)
