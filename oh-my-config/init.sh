@@ -31,9 +31,11 @@ brew install lsd
 
 # autojump
 brew install autojump
+echo "[ -f /usr/local/etc/profile.d/autojump.sh  ] && . /usr/local/etc/profile.d/autojump.sh" >>  ~/.zshrc
 
 # z (autojump和z安装一种就可以)
 brew install z
+echo "[ -f /usr/local/etc/profile.d/z.sh  ] && . /usr/local/etc/profile.d/z.sh" >>  ~/.zshrc
 
 # mtr
 brew install mtr
@@ -44,6 +46,9 @@ brew isntall httpie
 # jq
 brew install jq
 
+
+## cask
+brew install --cask fig
 
 # 禁止生成.DS_Store
 defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
