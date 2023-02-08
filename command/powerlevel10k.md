@@ -18,7 +18,7 @@ $ git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ~/powerlevel10
 $ cho 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 ```
 
-#### oh-my-zsh 
+#### oh-my-zsh 安装
 
 ``` powershell
 $ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
@@ -30,4 +30,17 @@ $ git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-
 ```tex
 Set ZSH_THEME="powerlevel10k/powerlevel10k" in ~/.zshrc
 ```
+
+#### antigen 安装
+
+``` text
+# 设置 theme
+antigen theme romkatv/powerlevel10k
+# 保存生效
+antigen apply
+```
+
+
+
+
 
