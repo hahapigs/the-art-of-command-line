@@ -26,6 +26,13 @@ sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install
 # fetch
 # sh -c "$(fetch -o - https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+# install powerlevel10k
+# 推荐 homebrew、oh-my-zsh 、antigen 、手动方式安装
+brew install romkatv/powerlevel10k/powerlevel10k
+echo "source $(brew --prefix)/opt/powerlevel10k/powerlevel10k.zsh-theme" >> ~/.zshrc
+# 
+
+
 # lsd (colorls在mac上安装需要先安装ruby，推荐安装lsd)
 brew install lsd
 
