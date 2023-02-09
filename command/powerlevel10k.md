@@ -34,10 +34,13 @@ Set ZSH_THEME="powerlevel10k/powerlevel10k" in ~/.zshrc
 #### antigen 安装
 
 ``` text
-# 设置 theme
-antigen theme romkatv/powerlevel10k
-# 保存生效
-antigen apply
+Add antigen theme romkatv/powerlevel10k to ~/.zshrc. Make sure you have antigen apply somewhere after it.
+```
+
+#### Zplug 安装
+
+``` tex
+Add zplug romkatv/powerlevel10k, as:theme, depth:1 to ~/.zshrc.
 ```
 
 
