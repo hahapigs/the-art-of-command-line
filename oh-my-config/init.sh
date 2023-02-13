@@ -66,7 +66,8 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 # 删除所有的.DS_Store
 # sudo find / -name '.DS_Store' --depth -exec rm {};
 
-
+# 管理java环境
+brew install jenv
 
 
 
