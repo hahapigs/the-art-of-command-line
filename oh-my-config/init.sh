@@ -71,8 +71,8 @@ brew install jenv
 
 # openJDK 8
 brew install temurin8
-
-
+# openJDK 11
+brew install temurin11
 
 
 
