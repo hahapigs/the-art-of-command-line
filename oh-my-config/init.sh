@@ -76,6 +76,9 @@ brew install temurin11
 # openJDK 17
 brew install temurin17
 
+# maven
+brew install maven@3.5
+
 
 
 
