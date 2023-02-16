@@ -79,6 +79,8 @@ brew install temurin17
 # maven
 brew install maven@3.5
 
+brew install iterm2
+
 
 
 
