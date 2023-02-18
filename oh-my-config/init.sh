@@ -81,6 +81,8 @@ brew install maven@3.5
 
 brew install iterm2
 
+brew install the-unarchiver
+
 
 
 
