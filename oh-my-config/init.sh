@@ -83,6 +83,7 @@ brew install iterm2
 
 brew install the-unarchiver
 
+brew install iina
 
 
 
