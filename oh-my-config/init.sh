@@ -83,9 +83,12 @@ brew install maven@3.5
 
 brew install iterm2
 
+brew install alfred
+
 brew install the-unarchiver
 
 brew install iina
+
 
 
 
