@@ -51,6 +51,8 @@ brew isntall httpie
 # jq
 brew install jq
 
+# fzf
+brew install fzf
 
 ## cask
 brew install --cask fig
