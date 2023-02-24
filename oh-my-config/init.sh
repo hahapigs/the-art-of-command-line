@@ -81,6 +81,9 @@ brew install temurin17
 # maven
 brew install maven@3.5
 
+# mycli
+brew intall mycli
+
 brew install iterm2
 
 brew install alfred
