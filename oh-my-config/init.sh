@@ -82,7 +82,7 @@ brew install temurin17
 brew install maven@3.5
 
 # mycli
-brew intall mycli
+brew install mycli
 
 brew install iterm2
 
