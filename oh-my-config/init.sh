@@ -90,9 +90,9 @@ brew install alfred
 
 brew install the-unarchiver
 
-brew install iina
+brew install --cask iina
 
-
+brew install --cask wechat 
 
 
 
