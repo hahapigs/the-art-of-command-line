@@ -84,11 +84,11 @@ brew install maven@3.5
 # mycli
 brew install mycli
 
-brew install iterm2
+brew install --cask iterm2
 
-brew install alfred
+brew install --cask alfred
 
-brew install the-unarchiver
+brew install --cask the-unarchiver
 
 brew install --cask iina
 
