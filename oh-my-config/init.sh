@@ -92,7 +92,6 @@ brew install the-unarchiver
 
 brew install --cask iina
 
-brew install --cask wechat 
 
 
 
