@@ -92,8 +92,7 @@ brew install --cask the-unarchiver
 
 brew install --cask iina
 
-#
-
+brew install --cask ssh-tunnel-manager
 
 
 
