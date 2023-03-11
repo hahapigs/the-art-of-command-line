@@ -71,6 +71,8 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 # 管理java环境
 brew install jenv
 
+brew untap homebrew/cask-versions
+
 # openJDK 8
 brew install temurin8
 # openJDK 11
