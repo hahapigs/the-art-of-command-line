@@ -73,6 +73,7 @@ brew install jenv
 
 brew untap homebrew/cask-versions
 brew untap caskroom/versions
+brew tap homebrew/cask-versions
 
 # openJDK 8
 brew install temurin8
