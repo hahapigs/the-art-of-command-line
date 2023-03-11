@@ -72,6 +72,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 brew install jenv
 
 brew untap homebrew/cask-versions
+brew untap caskroom/versions
 
 # openJDK 8
 brew install temurin8
