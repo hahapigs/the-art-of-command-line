@@ -41,7 +41,7 @@ $ cat /etc/shells
 #### 切换 shell
 
 ```powershell
-$ chsh -s /bin/bin
+$ chsh -s /bin/zsh
 ```
 
 也可以手动切换
