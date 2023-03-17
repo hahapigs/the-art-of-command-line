@@ -167,7 +167,8 @@ $ brew reinstall openjdk						        # 重新安装指定的软件
 $ brew reinstall --cask alfred			                # 重新安装指定的 homebrew/cask 软件
 $ brew search dash 		                                # 查找软件
 $ brew info dash			                            # 查看软件安装信息
-$ brew deps openjdk 	                                # 列出软件包的依赖关系
+$ brew deps openjdk 	                                # 列出软件包的依赖关系，树状图显示
+$ brew deps --installed --tree                          # 查看已安装的包的依赖关系，树状图显示
 $ brew list 					                        # 列出已安装的软件
 $ brew list --cask		                                # 列出已装的 homebrew/cask 软件
 $ brew outdated 			                            # 列出可以更新的软件包
@@ -178,6 +179,11 @@ $ brew services start mysql			                    # 启动指定的 mysql 服务
 $ brew services stop mysql 			                    # 停止指定的 mysql 服务
 $ brew services restart mysql 	                        # 重启指定的 mysql 服务
 $ brew tap						                        # 查看软件仓库
+$ brew cleanup                                          # 清理所有软件包
+$ brew cleanup mysql                                    # 清理指定软件包
+$ brew cleanup -n                                       # 查看可清理的软件包
+$ brew pin                                              # 锁定软件包
+$ brew unpin                                            # 取消锁定软件包
 ```
 ```powershell
 # 目前已安装的仓库
