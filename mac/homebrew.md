@@ -62,7 +62,7 @@ $ xcode-select --install
 $ softwareupdate --all --install --force
 ```
 2、查阅真实IP
-登录 [ipaddress](https://www.ipaddress.com/) 查询 _raw.githubusercontent.com _真实IP
+登录 [ipaddress](https://www.ipaddress.com/) 查询raw.githubusercontent.com 真实IP
 ![image.png](https://cdn.nlark.com/yuque/0/2020/png/725923/1599892918585-ff164af2-8e34-4327-b413-3868e6966114.png#align=left&display=inline&height=173&margin=%5Bobject%20Object%5D&name=image.png&originHeight=346&originWidth=848&size=31962&status=done&style=none&width=424)
 3、修改 hosts 文件
 ```powershell
@@ -156,28 +156,28 @@ $ brew update
 ## 使用
 ```powershell
 $ brew update 											# 更新 homebrew
-$ brew upgrade      								# 更新所有安装过的软件
-$ brew upgrade openjdk  						# 更新指定软件
-$ brew upgrade --cask alfred 				# 更新指定的 cahomebrew/cask 软件
-$ brew install opnejdk							# 安装指定软件
-$ brew install --cask alfred				# 装指定的 homebrew/cask 软件
-$ brew uninstall openjdk						# 卸载指定的软件
-$ brew uninstall --cask alfred			# 卸载指定的 homebrew/cask 软件
-$ brew reinstall openjdk						# 重新安装指定的软件
-$ brew reinstall --cask alfred			# 重新安装指定的 homebrew/cask 软件
-$ brew search dash 		# 查找软件
-$ brew info dash			# 查看软件安装信息
-$ brew deps openjdk 	# 列出软件包的依赖关系
-$ brew list 					# 列出已安装的软件
-$ brew list --cask		# 列出已装的 homebrew/cask 软件
-$ brew outdated 			# 列出可以更新的软件包
-$ brew outdated --cask 		# 列出可以更新的 homebrew/cask 软件包
-$ brew doctor					# 监测
-$ brew services list	# 列出已安装的服务
-$ brew services start mysql			# 启动指定的 mysql 服务
-$ brew services stop mysql 			# 停止指定的 mysql 服务
-$ brew services restart mysql 	# 重启指定的 mysql 服务
-$ brew tap						# 查看软件仓库
+$ brew upgrade      								    # 更新所有安装过的软件
+$ brew upgrade openjdk  						        # 更新指定软件
+$ brew upgrade --cask alfred 				            # 更新指定的 cahomebrew/cask 软件
+$ brew install opnejdk							        # 安装指定软件
+$ brew install --cask alfred				            # 装指定的 homebrew/cask 软件
+$ brew uninstall openjdk						        # 卸载指定的软件
+$ brew uninstall --cask alfred			                # 卸载指定的 homebrew/cask 软件
+$ brew reinstall openjdk						        # 重新安装指定的软件
+$ brew reinstall --cask alfred			                # 重新安装指定的 homebrew/cask 软件
+$ brew search dash 		                                # 查找软件
+$ brew info dash			                            # 查看软件安装信息
+$ brew deps openjdk 	                                # 列出软件包的依赖关系
+$ brew list 					                        # 列出已安装的软件
+$ brew list --cask		                                # 列出已装的 homebrew/cask 软件
+$ brew outdated 			                            # 列出可以更新的软件包
+$ brew outdated --cask 		                            # 列出可以更新的 homebrew/cask 软件包
+$ brew doctor					                        # 监测
+$ brew services list	                                # 列出已安装的服务
+$ brew services start mysql			                    # 启动指定的 mysql 服务
+$ brew services stop mysql 			                    # 停止指定的 mysql 服务
+$ brew services restart mysql 	                        # 重启指定的 mysql 服务
+$ brew tap						                        # 查看软件仓库
 ```
 ```powershell
 # 目前已安装的仓库
