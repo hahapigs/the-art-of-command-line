@@ -88,6 +88,9 @@ brew install maven@3.5
 # mysql
 brew install mysql
 
+brew install mysql@5.7
+
+
 # mycli
 brew install mycli
 
