@@ -45,6 +45,21 @@ echo "[ -f /usr/local/etc/profile.d/z.sh  ] && . /usr/local/etc/profile.d/z.sh" 
 # zoxide
 brew install zoxide
 
+# dust
+brew install dust
+
+# duf
+brew install duf
+
+# procs
+brew install procs
+
+# bottom
+brew install bottom
+
+# exa
+brew install exa
+
 # mtr
 brew install mtr
 
