@@ -42,6 +42,7 @@ echo "[ -f /usr/local/etc/profile.d/autojump.sh  ] && . /usr/local/etc/profile.d
 brew install z
 echo "[ -f /usr/local/etc/profile.d/z.sh  ] && . /usr/local/etc/profile.d/z.sh" >>  ~/.zshrc
 
+# zoxide
 brew install zoxide
 
 # mtr
