@@ -72,6 +72,9 @@ brew install jq
 # fzf
 brew install fzf
 
+# atuin 历史记录管理工具，支持多端同步
+brew install atuin
+
 ## cask
 brew install --cask fig
 
