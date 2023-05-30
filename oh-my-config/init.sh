@@ -89,6 +89,9 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 # 删除所有的.DS_Store
 # sudo find / -name '.DS_Store' --depth -exec rm {};
 
+# 允许任何来源的安装
+sudo spctl --master-disable
+
 # 管理java环境
 brew install jenv
 
