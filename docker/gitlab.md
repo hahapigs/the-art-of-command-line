@@ -10,9 +10,9 @@ $ docker run \
 --name gitlab \
 -p 8889:80 \
 -p 8822:22 \
--v /alibaba/gitlab/etc:/etc/gitlab \
--v /alibaba/gitlab/log:/var/log/gitlab \
--v /alibaba/gitlab/opt:/var/opt/gitlab \
+-v /DockerData/gitlab/etc:/etc/gitlab \
+-v /DockerData/gitlab/log:/var/log/gitlab \
+-v /DockerData/gitlab/opt:/var/opt/gitlab \
 --restart always \
 --privileged=true \
 gitlab/gitlab-ce
@@ -20,7 +20,7 @@ gitlab/gitlab-ce
 # 查看创建容器是否成功
 $ docker ps -a
 
-# 查看 nexus 日志
+# 查看 gitlab 日志
 $ docker logs -f gitlab
 ```
 注意：如果容器的 status 是 health 状态，说明 gitlab 启动完成
@@ -30,5 +30,5 @@ http://localhost:8889
 
 # 默认账户为 root
 # 查看 root 密码
-$ cat /alibaba/gitlab/etc/initial_root_password
+$ cat /DockerData/gitlab/etc/initial_root_password
 ```
