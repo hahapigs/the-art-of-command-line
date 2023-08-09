@@ -12,7 +12,7 @@ $ docker iamges
 ### 2、创建容器
 ```powershell
 # 创建容器
-$ docker run -d --name nexus -p 8888:8081 -v /alibaba/nexus/nexus-data:/nexus-data  --restart=always --privileged=true sonatype/nexus3
+$ docker run -d --name nexus -p 8888:8081 -v /DockerData/nexus/nexus-data:/nexus-data  --restart=always --privileged=true sonatype/nexus3
 
 # 查看创建容器是否成功
 $ docker ps -a
@@ -32,7 +32,7 @@ $ docker logs -f nexus
 # 默认用户为admin
 
 # 默认密码查看，因为 docker 创建容器的时候挂载了外部数据卷，目录为 ~/nexus/nexus-data/
-$ cat ~/nexus/nexus-data/admin.properties
+$ cat /DockerData/nexus/nexus-data/admin.properties
 ```
 
 **注意：如果要更改 nexus 容器的默认端口，可以执行如下操作：**<br />方法一：
