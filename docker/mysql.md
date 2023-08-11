@@ -29,12 +29,19 @@ $ docker logs -f mysql
 
 ### 3、登录
 
+#### docker
+
 ``` powershell
 # 登录 docker
 $ docker exec -it mysql:/bin/bash
 # 连接 mysql
-$ mysql -u root -
-
-
-
+$ mysql -u root -p
 ```
+
+#### mycli
+
+``` powershell
+# 连接 mysql
+$ mycli -u roo - p
+```
+
