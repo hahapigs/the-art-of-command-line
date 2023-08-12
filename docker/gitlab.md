@@ -17,6 +17,9 @@ $ docker run \
 --privileged=true \
 gitlab/gitlab-ce
 
+# 设置 gitlab 系统时间和物理机环境一致，需要设置 localdate
+$ -v /etc/localtime:/etc/localtime
+
 # 查看创建容器是否成功
 $ docker ps -a
 
