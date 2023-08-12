@@ -12,7 +12,7 @@ $ docker run \
 -itd \
 --name mysql \
 -p 3306:3306 \
--v /DockerData/mysql/config:/etc/conf.d \
+-v /DockerData/mysql/conf:/etc/mysql/conf.d \
 -v /DockerData/mysql/data:/var/lib/mysql \
 -v /DockerData/mysql/log:/var/log/mysql \
 -e MYSQL_ROOT_PASSWORD=123456	\
