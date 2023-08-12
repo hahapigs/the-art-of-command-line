@@ -14,6 +14,9 @@ $ docker iamges
 # 创建容器
 $ docker run -d --name nexus -p 8888:8081 -v /DockerData/nexus/nexus-data:/nexus-data  --restart=always --privileged=true sonatype/nexus3
 
+# 设置 nexus-maven 系统时间和物理机环境一致，需要设置 localtime
+$ -v /etc/localtime:/etc/localtime
+
 # 查看创建容器是否成功
 $ docker ps -a
 
