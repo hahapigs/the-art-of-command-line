@@ -26,7 +26,7 @@ $ -v /etc/localtime:/etc/localtime
 # 查看创建容器是否成功
 $ docker ps -a
 
-# 查看 gitlab 日志
+# 查看 mysql 日志
 $ docker logs -f mysql
 ```
 
