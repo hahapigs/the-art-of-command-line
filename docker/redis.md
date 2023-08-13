@@ -21,7 +21,7 @@ redis redis-server /etc/redis/redis.conf
 # 查看创建容器是否成功
 $ docker ps -a
 
-# 查看 gitlab 日志
+# 查看 redis 日志
 $ docker logs -f redis
 ```
 
