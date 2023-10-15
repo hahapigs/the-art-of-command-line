@@ -48,3 +48,11 @@ $ mysql -u root -p
 $ mycli -u roo - p
 ```
 
+### 修改密码
+
+``` powershell
+$ ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';
+$ ALTER USER 'root'@'%' IDENTIFIED BY 'your_new_password';
+$ FLUSH PRIVILEGES;
+```
+
