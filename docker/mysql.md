@@ -28,6 +28,9 @@ $ docker ps -a
 
 # 查看 mysql 日志
 $ docker logs -f mysql
+
+# 如果不随系统一起启动，则设置 --restart no，也可以在创建完容器再修改
+$ docker edit --restart=no mysql
 ```
 
 ### 3、登录
@@ -48,7 +51,7 @@ $ mysql -u root -p
 $ mycli -u roo - p
 ```
 
-### 修改密码
+### 4、修改密码
 
 ``` powershell
 $ ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';
