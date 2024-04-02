@@ -30,7 +30,7 @@ $ docker ps -a
 $ docker logs -f mysql
 
 # 如果不随系统一起启动，则设置 --restart no，也可以在创建完容器再修改
-$ docker edit --restart=no mysql
+$ docker update --restart=no mysql
 ```
 
 ### 3、登录
@@ -54,8 +54,8 @@ $ mycli -u roo - p
 ### 4、修改密码
 
 ``` powershell
-$ ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';
-$ ALTER USER 'root'@'%' IDENTIFIED BY 'your_new_password';
+$ ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
+$ ALTER USER 'root'@'%' IDENTIFIED BY '123456';
 $ FLUSH PRIVILEGES;
 ```
 
@@ -115,8 +115,8 @@ $ mycli -h 127.0.0.1 -u root -p -P 3307
 创建一个用于复制的专用用户，并赋予适当的权限。以下是示例命令
 
 ``` sql
-CREATE USER 'replication_user'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
-GRANT REPLICATION SLAVE ON *.* TO 'replication_user'@'%';
+CREATE USER 'replication.user'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+GRANT REPLICATION SLAVE ON *.* TO 'replication.user'@'%';
 FLUSH PRIVILEGES;
 ```
 
@@ -156,7 +156,7 @@ read_only = 1
 登录 mysql 控制台
 
 ``` powershell
-# 先登录 mysql-master 容器
+# 先登录 mysql-slave-1 容器
 $ docker exec -it mysql-slave-1 /bin/bash 
 # 登录 mysql 控制台
 $ mysql -u root -p
@@ -168,19 +168,16 @@ $ mycli -h 127.0.0.1 -u root -p -P 3307
 使用以下命令连接到主服务器
 
 ``` sql
-CHANGE MASTER TO MASTER_HOST='master_host', MASTER_USER='replication_user', MASTER_PASSWORD='123456', MASTER_LOG_FILE='filename', MASTER_LOG_POS=log_position;
+CHANGE MASTER TO MASTER_HOST='172.19.0.2', MASTER_USER='replication.user', MASTER_PASSWORD='123456', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=108;
 ```
 
 ``` powershell
 # MASTER_HOST 通过如下命令查看主机 IP
 $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql-master
 
-# MASTER_USER 主机创建的用于复制的专用用户
-
-# MASTER_PASSWORD 专用用户的密码
-
 # MASTER_LOG_FILE 主服务器上二进制日志文件的名称，从 "SHOW MASTER STATUS;" 获取 
 # MASTER_LOG_FILE = File + Position = mysql-bin.000001
+
 $ mycli -h 127.0.0.1 -u root -p -P 3307 -e "SHOW MASTER STATUS;"
 
 # MASTER_LOG_POS 需要从中开始复制的位置，从 "SHOW MASTER STATUS;" 获取 Binlog_Do_DB 值
@@ -188,7 +185,7 @@ $ mycli -h 127.0.0.1 -u root -p -P 3307 -e "SHOW MASTER STATUS;"
 
 ```
 
-启动同步复制l，并查看状态，在 `Slave_IO_Running` 和 `Slave_SQL_Running` 字段中，确保状态显示为 `Yes`。如果有任何错误，可以在该状态中获取相关信息。
+启动同步复制，并查看状态，在 `Slave_IO_Running` 和 `Slave_SQL_Running` 字段中，确保状态显示为 `Yes`。如果有任何错误，可以在该状态中获取相关信息。
 
 ``` sql
 -- 启动
@@ -215,6 +212,8 @@ stop slave;
 $ mycli -uroot -h 127.0.0.1 -P 3308 -e "STOP REPLICA IO_THREAD FOR CHANNEL '';"
 ```
 
+说明：从机2或者更多操作相同
+
 ### 4、测试
 
-在 master 上执行 `insert`、`update`、`delete` 操作，在 slave 上执行 `select` 操作。
+在 master 上执行 `insert`、`update`、`delete` 操作，在 slave 上执行 `select` 查看结果是否同步完成。
