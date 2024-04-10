@@ -1,3 +1,5 @@
+## Mysql 主从复制
+
 ### 1、拉取 mysqll 8.0
 
 ``` powershell
@@ -217,3 +219,123 @@ $ mycli -uroot -h 127.0.0.1 -P 3308 -e "STOP REPLICA IO_THREAD FOR CHANNEL '';"
 ### 4、测试
 
 在 master 上执行 `insert`、`update`、`delete` 操作，在 slave 上执行 `select` 查看结果是否同步完成。
+
+## MGR
+
+### 1、修改 my.cnf
+
+``` tex
+[mysqld]
+server-id = 1
+# 启用二进制日志
+log_bin = mysql-bin
+# 将执行的二进制日志事件也记录到自己的二进制日志中，会增加从库写负载和二进制文件大小
+log_slave_updates = 1
+# 设置binlog格式 STATEMENT(同步SQL脚本) / ROW(同步行数据) / MIXED(混合同步)
+binlog_format = ROW
+# 考虑到后期故障切换，增加slave的中继日志
+relay-log = relay-log-bin
+
+# 全局事务
+gtid_mode = ON
+# 强制GTID的一致性
+enforce_gtid_consistency = ON
+# 将master.info元数据保存在系统表中
+master_info_repository = TABLE
+# 将relay.info元数据保存在系统表中
+relay_log_info_repository = TABLE
+# 禁用二进制日志事件校验
+binlog_checksum = NONE
+
+# 记录事务的算法，官网建议使用 XXHASH64
+transaction_write_set_extraction = XXHASH64
+# 启动时加载group_replication插件
+plugin_load_add='group_replication.so'
+# GROUP的名字，是UUID值，可以使用select uuid()生成
+loose-group_replication_group_name = '558edd3c-02ec-11ea-9bb3-080027e39bd2'
+# 是否随服务器启动而自动启动组复制，不建议直接启动，怕故障恢复时有扰乱数据准确性的特殊情况
+loose-group_replication_start_on_boot = OFF
+# 本地MGR的IP地址和端口，host:port，是MGR的端口,不是数据库的端口
+loose-group_replication_local_address = '172.24.0.2:33061'
+# 需要接受本MGR实例控制的服务器IP地址和端口，是MGR的端口，不是数据库的端口
+loose-group_replication_group_seeds = '172.24.0.2:33061,172.24.0.3:33061,172.24.0.4:33061'
+# 开启引导模式，添加组成员，用于第一次搭建MGR或重建MGR的时候使用，只需要在集群内的其中一台开启
+loose-group_replication_bootstrap_group = OFF
+# 白名单
+loose-group_replication_ip_whitelist = '172.24.0.0/16'
+# 本机ip
+report-host = '172.24.0.2'
+# 本机port
+report-port = 3306
+```
+
+说明：其他两台 mysql 复制此配置，只需要更改 server-id、loose-group_replication_local_address、report-host 这几个参数。
+
+如果在配置了 plugin_load_add='group_replication.so' ，可以不用在 mysql 执行安装插件的sql
+
+``` sql
+#加载GR插件
+install plugin group_replication soname 'group_replication.so';
+show plugins;
+```
+
+### 2、启动主机
+
+```sql
+SET session sql_log_bin = 0;
+CREATE USER 'replication.user'@'172.24.0.%' IDENTIFIED WITH mysql_native_password BY '123456';
+GRANT REPLICATION SLAVE ON *.* TO 'replication.user'@'172.24.0.%';
+FLUSH PRIVILEGES;
+SET session sql_log_bin = 1;
+CHANGE MASTER TO MASTER_USER='replication.user', MASTER_PASSWORD='123456' FOR CHANNEL 'group_replication_recovery';
+SET global group_replication_bootstrap_group = ON;
+START group_replication;
+SET global group_replication_bootstrap_group = OFF;
+```
+
+注意：使用 8.0.35 版本，需要改用如下命令
+
+``` sql
+change replication source to source_user='repl', source_password='123456' for channel 'group_replication_recovery';
+```
+
+### 3、启动从机
+
+``` sql
+SET session sql_log_bin = 0;
+CREATE USER 'replication.user'@'172.24.0.%' IDENTIFIED WITH mysql_native_password BY '123456';
+GRANT REPLICATION SLAVE ON *.* TO 'replication.user'@'172.24.0.%';
+FLUSH PRIVILEGES;
+SET session sql_log_bin = 1;
+CHANGE MASTER TO MASTER_USER='replication.user', MASTER_PASSWORD='123456' FOR CHANNEL 'group_replication_recovery';
+START group_replication;
+```
+
+注意：如果之前已经设置了主从复制或者其他复制方式，在执行 START group_replication 遇到一场，需要执行如下命令，主要是解决RECOVERING 状态
+
+``` sql
+stop slave;
+reset master;
+reset slave all;
+```
+
+### 4、查看状态
+
+``` sql
+select * from performance_schema.replication_group_members;
+
++---------------------------+--------------------------------------+-------------+-------------+--------------+-------------+----------------+----------------------------+
+| CHANNEL_NAME              | MEMBER_ID                            | MEMBER_HOST | MEMBER_PORT | MEMBER_STATE | MEMBER_ROLE | MEMBER_VERSION | MEMBER_COMMUNICATION_STACK |
++---------------------------+--------------------------------------+-------------+-------------+--------------+-------------+----------------+----------------------------+
+| group_replication_applier | 78a416ba-f67d-11ee-bf4f-0242ac180002 | 172.24.0.2  | 3306        | ONLINE       | PRIMARY     | 8.1.0          | XCom                       |
+| group_replication_applier | 815538df-f67d-11ee-bf53-0242ac180003 | 172.24.0.3  | 3306        | ONLINE       | SECONDARY   | 8.1.0          | XCom                       |
+| group_replication_applier | 89f87e8d-f67d-11ee-beb4-0242ac180004 | 172.24.0.4  | 3306        | ONLINE       | SECONDARY   | 8.1.0          | XCom                       |
++---------------------------+--------------------------------------+-------------+-------------+--------------+-------------+----------------+----------------------------+
+```
+
+MEMBER_STATE 是 ONLINE 说明正常，如果出现 RECOVERING 参看 3
+
+### 5、结合 ProxySql 使用
+
+参看 [proxysql](proxysql.md)
+
