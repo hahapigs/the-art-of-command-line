@@ -243,6 +243,8 @@ $ keepalived -l -f /etc/keepalived/keepalived.conf
 $ systemctl start keepalived.service
 ```
 
+拓展： 如果想使用 systemctl，参考 [systemctl](https://zhuanlan.zhihu.com/p/648578218)
+
 查看进程是否启动
 
 ``` powershell
@@ -324,3 +326,6 @@ $ nc -z -v -w 3 172.24.0.101 6033
 ```
 
 问题：关于 keepalive 的 vrrpscript 脚本无法执行的问题，尝试一段时间未能解决，暂时搁置。（keepalived 脑裂问题）
+
+参考文章：[在docker的ubuntu中安装keepalived](https://blog.csdn.net/lxcw_sir/article/details/134688834)
+
