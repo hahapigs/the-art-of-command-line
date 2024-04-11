@@ -1,5 +1,13 @@
 ## ubuntu
 
+| ip           | 服务                  | 环境   | 容器名   |
+| ------------ | --------------------- | ------ | -------- |
+| 172.24.0.7   | proxysql + keepalived | ubuntu | ubuntu-1 |
+| 172.24.0.8   | proxysql + keepalived | ubuntu | ubuntu-2 |
+| 172.24.0.101 |                       |        | 虚拟ip   |
+
+
+
 ### 1、拉取镜像
 
 ``` powershell
