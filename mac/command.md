@@ -16,5 +16,16 @@ $ sysctl -n hw.logicalcpu
 
 
 
+``` powershell
+# 将文件内容拷贝到剪切板
+$ pbcopy < path/to/file
+$ cat path/to/file | pbcopy
+# 查找后缀 ".md" 文件，把查找结果拷贝到剪切板
+$ find . -name "*.png" | pbcopy
 
+# 将剪切板的内容拷贝进文件
+$ pbpaste > path/to/file
+# 剪切板内容过滤关键词
+$ pbpaste | grep foo
+```
 
