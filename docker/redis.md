@@ -1,12 +1,31 @@
 
 
+ ### 设置卷位置
+
+##### Mac
+
+``` powershell
+# docker卷目录
+$ export DOCKER_HOME="$HOME/DockerData"
+# redis卷目录
+$ export REDIS_HOME="$DOCKER_HOME/redis"
+$ mkdir -p $REDIS_HOME
+```
+
+##### Linux
+
+``` powershell
+$ export REDIS_HOME=/srv/redis
+```
+
+<font color="#e83e8c">REDIS_HOME</font> 推荐附加设置在 shell 中
+
+- bash	<font color="#e83e8c"> ~/.bash_profile</font>
+- zsh       <font color="#e83e8c">~/.zshrc</font>
+
 ### 1、单机（standalone）
 
 ##### 编写配置
-
-``` powershell
-$ mkdir -p $REDIS_HOME
-```
 
 ``` powershell
 # redis
@@ -19,13 +38,6 @@ slave-read-only no
 ###### docker run
 
 ``` powershell
-# 拉取镜像
-$ docker pull redis
-
-##### 设置环境变量
-$ export DOCKER_HOME="/Users/zhaohongliang/DockerData"
-$ export REDIS_HOME="$DOCKER_HOME/redis"
-
 # 创建容器
 $ docker run \
 -itd \
@@ -249,13 +261,13 @@ protected-mode no
   ```
   
 - 验证
-	
+
   ``` powershell
   # 分别验证 sentinel-1，sentinel-2, sentinel-3，返回 PONG 说明启动正常
   $ redis-cli 127.0.0.1 -p 6379 ping
   ```
-  
-``` powershell
+
+  ``` powershell
   $ redis-cli -h 127.0.0.1 -p 26379 info sentinel
   # Sentinel
   sentinel_masters:1
@@ -266,7 +278,77 @@ protected-mode no
   sentinel_simulate_failure_flags:0
   master0:name=mymaster,status=ok,address=172.17.0.2:6379,slaves=2,sentinels=3
   ```
+
   
+
+- SpringBoot 配置哨兵
+
+  ``` powershell
+  # 查看 sentinel-1，sentinel-2, sentinel-3 ip
+  $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=sentinel")
+  172.24.0.12
+  172.24.0.11
+  172.24.0.10
   
+  # 和上面命令效果一样
+  $ docker ps -q --filter "name=sentinel" | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+  172.24.0.12
+  172.24.0.11
+  172.24.0.10
+  ```
+
+  application-cluster.yaml
+
+  ``` yaml
+  spring:
+    data:
+      redis:
+        password:
+        database: 0
+        # 连接超时时长（毫秒）
+        timeout: 6000ms
+        lettuce:
+          pool:
+            # 连接池最大连接数（使用负值表示没有限制）
+            max-active: 100
+            # 连接池最大阻塞等待时间（使用负值表示没有限制）
+            max-wait: -1ms
+            # 连接池中的最大空闲连接
+            max-idle: 10
+            # 连接池中的最小空闲连接
+            min-idle: 5
+        sentinel:
+          master: mymaster
+          nodes: 172.17.0.5:26379,172.17.0.6:26379,172.17.0.7:26379
+  ```
+
+  注意：请务必保证 springboot 和 redis 哨兵网络可达情况。当使用 IDEA 调试哨兵集群的时候，由于是 docker 自已定网络部署，所以导致 springboot 在获取 sentinel 的 master IP 获取到了 master 的虚拟 IP，导致连接失败。所以把 spring boot 项目做成 docker 容器。
+
+  Dokcerfile
+
+  ``` powershell
+  FROM openjdk:17-jdk
   
+  WORKDIR /app/canary
+  
+  COPY ./target/canary-0.0.1-SNAPSHOT.jar /app/canary/canary-0.0.1-SNAPSHOT.jar
+  
+  CMD ["java", "-jar", "-Dspring.profiles.active=cluster", "canary-0.0.1-SNAPSHOT.jar"]
+  ```
+
+  ``` powershell
+  docker run \
+  -itd \
+  --name canary \
+  -p 8080:8080 \
+  --restart=no \
+  --network=canary-net \
+  -v /etc/localtime:/etc/localtime \
+  -v $PROJECT_HOME/target:/opt/canary canary:cluster
+  ```
+
+  
+
+  
+
   
