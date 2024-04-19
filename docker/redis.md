@@ -70,9 +70,9 @@ $ wget http://download.redis.io/redis-stable/redis.conf
 
 注意：
 
-1、docker 启动不要设置 daemonize yes，否则会自动退出，不配置则默认 no
+1、`docker` 启动不要设置 `daemonize yes`，否则会自动退出，不配置则默认 `no`
 
-2、如果 protected-mode 设置为 yes，需要额外设置 bind，建议生产开启，不配置默认为 yes
+2、如果 `protected-mode` 设置为 `yes`，需要额外设置 `bind`，建议生产开启，不配置默认为 `yes`
 
 ##### docker run
 
@@ -112,7 +112,7 @@ $ docker logs -f redis
 
 ##### redis
 
-创建 redis-1, redis-2, redis-3 的工作目录
+创建 `redis-1`， `redis-2`，`redis-3` 的工作目录
 
 ``` powershell
 $ mkdir -p $REDIS_HOME/redis{-1, -2, -3}/conf
@@ -288,7 +288,7 @@ dbfilename "dump.rdb"
   logfile "/var/log/redis/sentinel.log"
   ```
 
-  将修改后的配置分别 copy 到 redis-1, redis-2, redis-3 的 conf
+  将修改后的配置分别 `copy` 到 `redis-1`，`redis-2`，`redis-3` 的 `conf`
 
   ``` powershell
   ##### 利用 MacOS pbcopy 和 pbpaste 处理，其他系统请逐一拷贝
@@ -364,15 +364,16 @@ dbfilename "dump.rdb"
 
 - SpringBoot 配置哨兵
 
-  查看 sentinel-1，sentinel-2, sentinel-3 的 IP
+  查看 `sentinel-1`，`sentinel-2`，`sentinel-3` 的 `IP`，下面两条指令效果相同
 
   ``` powershell
   $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=sentinel")
   172.24.0.12
   172.24.0.11
   172.24.0.10
-  
-  # 和上面命令效果一样
+  ```
+
+  ```powershell
   $ docker ps -q --filter "name=sentinel" | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
   172.24.0.12
   172.24.0.11
@@ -404,7 +405,7 @@ dbfilename "dump.rdb"
           nodes: 172.17.0.5:26379,172.17.0.6:26379,172.17.0.7:26379
   ```
 
-  注意：请务必保证 springboot 和 redis 哨兵网络可达情况。当使用 IDEA 调试哨兵集群的时候，由于是 docker 自已定网络部署，所以导致 springboot 在获取 sentinel 的 master IP 获取到了 master 的虚拟 IP，导致连接失败。所以把 spring boot 项目做成 docker 容器。
+  注意：请务必保证 `springboot` 和 `redis` 哨兵网络可达情况。当使用 `IDEA` 调试哨兵集群的时候，由于是 `docker` 自已定网络部署，所以导致 `springboot` 在获取 `sentinel` 的 `master` 的 `IP` 时获取到了虚拟 `IP`，导致连接失败。所以把 `spring boot` 项目以 `docker` 方式部署。
 
   
 
