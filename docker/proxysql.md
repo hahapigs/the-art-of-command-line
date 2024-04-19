@@ -106,6 +106,7 @@ $ docker run \
 -v $PROXYSQL_HOME/logs:/var/log/proxysql \
 --restart no \
 --privileged=true \
+--network canary-net \
 proxysql/proxysql
 ```
 
@@ -126,24 +127,7 @@ create user 'proxy.admin'@'%' identified by 'Pass!234';
 grant all privileges on *.* to 'proxy.admin'@'%' with grant option;
 ```
 
-##### Step2：启动
-
-```powershell
-$ docker run \
--itd \
---name proxysql \
--p 16032:6032 \
--p 16033:6033 \
--p 16070:6070 \
--v $PROXYSQL_HOME/conf/proxysql.cnf:/etc/proxysql.cnf \
--v $PROXYSQL_HOME/data:/var/lib/proxysql \
--v $PROXYSQL_HOME/logs:/var/log/proxysql \
---restart no \
---privileged=true \
-proxysql/proxysql
-```
-
-##### Step3：主从分组信息
+##### Step2：主从分组信息
 
 登录 proxysql
 
@@ -189,7 +173,7 @@ save mysql servers to disk;
 show tables like 'mysql%hostgroups';
 ```
 
-##### Step4：添加节点服务器
+##### Step3：添加节点服务器
 
 ``` sql
 insert into mysql_servers(hostgroup_id,hostname,port)  values(10,'172.19.0.2',3306);
@@ -200,7 +184,7 @@ save mysql servers to disk;
 select * from mysql_servers;
 ```
 
-##### Step5：配置监控账号
+##### Step4：配置监控账号
 
 ```sql
 UPDATE global_variables SET variable_value='proxy.monitor' WHERE variable_name='mysql-monitor_username';
@@ -212,7 +196,7 @@ select * from mysql_server_ping_log limit 10;
 select * from mysql_server_read_only_log limit 10;
 ```
 
-##### Step6：配置对外访问账号
+##### Step5：配置对外访问账号
 
 ``` sql
 show create table mysql_users\G;
@@ -222,7 +206,7 @@ save mysql users to disk;
 select * from mysql_users\G;
 ```
 
-##### Step7：读写分离策略规则
+##### Step6：读写分离策略规则
 
 ``` sql
 INSERT INTO mysql_query_rules (rule_id, active, match_pattern, destination_hostgroup, apply)
@@ -246,7 +230,7 @@ load mysql servers to runtime;
 save mysql servers to disk;
 ```
 
-##### Step8：测试
+##### Step7：测试
 
 ``` powershell
 $ mysql -h 127.0.0.1 -P 16033 -uproxy.admin -p -e "select @@server_id";
@@ -311,6 +295,7 @@ $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
   -v $PROXYSQL_HOME/proxysql-1/logs:/var/log/proxysql \
   --restart no \
   --privileged=true \
+  --network canary-net \
   proxysql/proxysql
   ```
 
@@ -330,6 +315,7 @@ $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
   -v $PROXYSQL_HOME/proxysql-2/logs:/var/log/proxysql \
   --restart no \
   --privileged=true \
+  --network canary-net \
   proxysql/proxysql
   ```
 
@@ -445,5 +431,5 @@ $ rmdir $PROXYSQL_HOME/proxysql{-1, -2}/data/
 $ docker restart `docker ps -a | grep proxysql | awk -F " " '{print $1}' `
 ```
 
-**说明：在 `proxysql-1` 执行 `step1~8`，`proxysql-2` 会自动拉取配置**
+**说明：在 `proxysql-1` 执行 `step1~7`，`proxysql-2` 会自动拉取配置**
 
