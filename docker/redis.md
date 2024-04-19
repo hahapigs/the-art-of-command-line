@@ -1,8 +1,8 @@
+ ### 准备
 
+##### 设置卷位置
 
- ### 设置卷位置
-
-##### Mac
+###### Mac
 
 ``` powershell
 # docker卷目录
@@ -12,10 +12,10 @@ $ export REDIS_HOME="$DOCKER_HOME/redis"
 $ mkdir -p $REDIS_HOME
 ```
 
-##### Linux
+######  Linux
 
 ``` powershell
-$ export REDIS_HOME=/srv/redis
+$ export REDIS_HOME="/srv/redis"
 ```
 
 <font color="#e83e8c">REDIS_HOME</font> 推荐附加设置在 shell 中
@@ -26,11 +26,24 @@ $ export REDIS_HOME=/srv/redis
 
   
 
+##### 容器使用主机装载的卷来存储持久数据
+
 | 本地位置         | 容器位置       | 使用     |
 | ---------------- | -------------- | -------- |
 | $REDIS_HOME/conf | /etc/redis     | 配置文件 |
 | $REDIS_HOME/data | /data          | 数据     |
 | $REDIS_HOME/logs | /var/log/redis | 日志     |
+
+##### 目录结构
+
+├── conf
+│   ├── redis.conf
+│   └── sentinel.conf
+├── data
+│   └── dump.rdb
+└── logs
+    ├── redis.log
+    └── sentinel.log
 
 
 
@@ -42,8 +55,10 @@ $ export REDIS_HOME=/srv/redis
 # redis
 bind 0.0.0.0
 port 6379
+daemonize no
 protected-mode no
-slave-read-only no
+dbfilename "dump.rdb"
+dir /data
 logfile "/var/log/redis/redis.log"
 ```
 
@@ -52,6 +67,12 @@ logfile "/var/log/redis/redis.log"
 ``` powershell
 $ wget http://download.redis.io/redis-stable/redis.conf
 ```
+
+注意：
+
+1、docker 启动不要设置 daemonize yes，否则会自动退出，不配置则默认 no
+
+2、如果 protected-mode 设置为 yes，需要额外设置 bind，建议生产开启，不配置默认为 yes
 
 ##### docker run
 
@@ -91,6 +112,12 @@ $ docker logs -f redis
 
 ### 2、主从复制
 
+| 名称    | IP         | 宿主端口 | 端口 | 备注   |
+| ------- | ---------- | -------- | ---- | ------ |
+| redis-1 | 172.17.0.2 | 6379     | 6379 | master |
+| redis-2 | 172.17.0.3 | 6380     | 6379 | slave  |
+| redis-3 | 172.17.0.4 | 6381     | 6379 | slave  |
+
 ##### redis
 
 创建 redis-1, redis-2, redis-3 的工作目录
@@ -108,7 +135,8 @@ $ mkdir -p $REDIS_HOME/redis{-1, -2, -3}/conf
   bind 0.0.0.0
   port 6379
   protected-mode no
-  slave-read-only no
+  dbfilename "dump.rdb"
+  dir /data
   logfile "/var/log/redis/redis.log"
   ```
 
@@ -121,9 +149,10 @@ $ mkdir -p $REDIS_HOME/redis{-1, -2, -3}/conf
   -p 6379:6379 \
   -v $REDIS_HOME/redis-1/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-1/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+  -v $REDIS_HOME/redis-1/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-server /etc/redis/redis.conf
   ```
 
@@ -144,23 +173,25 @@ $ mkdir -p $REDIS_HOME/redis{-1, -2, -3}/conf
   bind 0.0.0.0
   port 6379
 protected-mode no
-  slave-read-only no
-  slaveof 172.17.0.2 6379
+  dbfilename "dump.rdb"
+  dir /data
   logfile "/var/log/redis/redis.log"
+  slaveof 172.17.0.2 6379
   ```
   
   启动
-  
-``` powershell
+
+  ``` powershell
   $ docker run \
   -itd \
-  --name redis-2 \
--p 6380:6379 \
+--name redis-2 \
+  -p 6380:6379 \
   -v $REDIS_HOME/redis-2/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-2/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+  -v $REDIS_HOME/redis-2/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-server /etc/redis/redis.conf
   ```
   
@@ -180,9 +211,10 @@ protected-mode no
   bind 0.0.0.0
   port 6379
   protected-mode no
-slave-read-only no
-  slaveof 172.17.0.2 6379
+dbfilename "dump.rdb"
+  dir /data
   logfile "/var/log/redis/redis.log"
+  slaveof 172.17.0.2 6379
   ```
   
   启动
@@ -191,12 +223,13 @@ slave-read-only no
   $ docker run \
   -itd \
   --name redis-3 \
-  -p 6381:6379 \
--v $REDIS_HOME/redis-3/conf/redis.conf:/etc/redis/redis.conf \
+-p 6381:6379 \
+  -v $REDIS_HOME/redis-3/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-3/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+  -v $REDIS_HOME/redis-3/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-server /etc/redis/redis.conf
   ```
   
@@ -229,6 +262,12 @@ slave-read-only no
 
 ### 3、哨兵模式
 
+| 名称       | IP         | 宿主端口 | 端口  | 备注             |
+| ---------- | ---------- | -------- | ----- | ---------------- |
+| sentinel-1 | 172.17.0.5 | 26379    | 26379 | 默认监测 redis-1 |
+| sentinel-2 | 172.17.0.6 | 26380    | 26379 | 默认监测 redis-1 |
+| sentinel-3 | 172.17.0.7 | 26381    | 26379 | 默认监测 redis-1 |
+
 ##### sentinel
 
 - sentinel-1
@@ -242,11 +281,11 @@ slave-read-only no
 
   查看主机IP
 
-   ``` powershell
+  ``` powershell
   # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
   $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
   172.17.0.2
-   ```
+  ```
 
   修改配置
 
@@ -275,10 +314,10 @@ slave-read-only no
   --name sentinel-1 \
   -p 26379:26379 \
   -v $REDIS_HOME/redis-1/conf/sentinel.conf:/etc/redis/sentinel.conf \
-  -v $REDIS_HOME/redis-1/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+  -v $REDIS_HOME/redis-1/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-sentinel /etc/redis/sentinel.conf
   ```
 
@@ -289,10 +328,10 @@ slave-read-only no
   --name sentinel-2 \
   -p 26380:26379 \
   -v $REDIS_HOME/redis-2/conf/sentinel.conf:/etc/redis/sentinel.conf \
--v $REDIS_HOME/redis-2/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+-v $REDIS_HOME/redis-2/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-sentinel /etc/redis/sentinel.conf
 ```
 	 
@@ -304,10 +343,10 @@ slave-read-only no
   --name sentinel-3 \
   -p 26381:26379 \
 -v $REDIS_HOME/redis-3/conf/sentinel.conf:/etc/redis/sentinel.conf \
-  -v $REDIS_HOME/redis-3/data:/data \
-  -v $REDIS_HOME/logs:/var/log/redis \
+  -v $REDIS_HOME/redis-3/logs:/var/log/redis \
   --restart no \
   --privileged=true \
+  --network canary-net \
   redis redis-sentinel /etc/redis/sentinel.conf
   ```
   
