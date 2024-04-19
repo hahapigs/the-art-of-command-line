@@ -226,7 +226,7 @@ $ systemctl start keepalived.service
 
 ``` powershell
 # 查看进程
-$ ps -ef|grep keepalived
+$ ps -ef | grep keepalived
 # 查看进程
 $ pgrep keepalived
 # 或者使用 systemctl 查看
