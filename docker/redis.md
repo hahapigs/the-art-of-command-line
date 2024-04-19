@@ -87,6 +87,7 @@ $ docker run \
 -v $REDIS_HOME/logs:/var/log/redis \
 --restart no \
 --privileged=true \
+--network canary-net \
 redis redis-server /etc/redis/redis.conf
 
 # 查看创建容器是否成功
@@ -96,11 +97,32 @@ $ docker ps -a
 $ docker logs -f redis
 ```
 
-##### docker compose
+##### docker-compose
 
 ``` yaml
+version: '3.8'
 
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - $REDIS_HOME/conf:/etc/redis
+      - $REDIS_HOME/data:/data
+      - $REDIS_HOME/logs:/var/log/redis 
+    privileged: true
 ```
+
+启动
+
+```powershell
+$ docker-compose up -d
+```
+
+
 
 ### 2、主从复制
 
@@ -168,15 +190,17 @@ protected-mode no
   dbfilename "dump.rdb"
   dir /data
   logfile "/var/log/redis/redis.log"
-  slaveof 172.17.0.2 6379
-  ```
   
-  启动
+  # 开启复制
+  # slaveof 172.17.0.2 6379
+  ```
 
+  启动
+  
   ``` powershell
-  $ docker run \
+$ docker run \
   -itd \
---name redis-2 \
+  --name redis-2 \
   -p 6380:6379 \
   -v $REDIS_HOME/redis-2/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-2/data:/data \
@@ -184,73 +208,135 @@ protected-mode no
   --restart no \
   --privileged=true \
   --network canary-net \
-  redis redis-server /etc/redis/redis.conf
+  redis redis-server /etc/redis/redis.conf --slaveof redis-1 6379
   ```
   
 - redis-3
-  
-  查看主机IP
-  
-  ``` powershell
-  # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
-  $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
-```
   
   编写配置
   
   ``` powershell
   # redis-3
   bind 0.0.0.0
-  port 6379
+port 6379
   protected-mode no
-dbfilename "dump.rdb"
+  dbfilename "dump.rdb"
   dir /data
   logfile "/var/log/redis/redis.log"
-  slaveof 172.17.0.2 6379
-  ```
   
+  # 开启复制
+  # slaveof 172.17.0.2 6379
+  ```
+
   启动
   
   ``` powershell
   $ docker run \
   -itd \
   --name redis-3 \
--p 6381:6379 \
+  -p 6381:6379 \
   -v $REDIS_HOME/redis-3/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-3/data:/data \
   -v $REDIS_HOME/redis-3/logs:/var/log/redis \
   --restart no \
-  --privileged=true \
+--privileged=true \
   --network canary-net \
-  redis redis-server /etc/redis/redis.conf
+  redis redis-server /etc/redis/redis.conf --slaveof redis-1 6379
   ```
-  
-- 验证
 
-  ``` powershell
+**说明：在 `redis.conf` 配置 `--slaveof 172.17.0.2 6379` 和 `doker run -itd ` 命令追加 `--slaveof redis-1 6379` 作用相同，推荐使用后者**。另外还可以使用 redis-cli 指令方式执行：
+
+```powershell
+$ redis-cli -h 127.0.0.1 -p 6380 slaveof 172.17.0.2 6379
+OK
+$ redis-cli -h 127.0.0.1 -p 6381 slaveof 172.17.0.2 6379
+OK
+```
+
+##### 测试
+
+``` powershell
 # 分别验证 redis-1，redis-2，redis-3，返回 PONG 说明启动正常
-  $ redis-cli 127.0.0.1 -p 6379 ping
-  PONG
-  ```
-  
-  ``` powershell
-  # 查看 master 节点返回的信息，其他 slave 节点返回信息与 master 会不同
-  $ redis-cli -h 127.0.0.1 -p 6379 info replication
-  # Replication
-  role:master
-  connected_slaves:2
-  slave0:ip=172.17.0.4,port=6379,state=online,offset=781363,lag=1
-  slave1:ip=172.17.0.5,port=6379,state=online,offset=781363,lag=1
-  master_failover_state:no-failover
-  master_replid:9025ed1427964c8cc6bc5c32f5d473680e303f63
-  master_replid2:5fa4bbdd4ed13ff18a8b5bf2e61754561278addf
-  master_repl_offset:781498
-  second_repl_offset:438077
-  repl_backlog_active:1
-  repl_backlog_size:1048576
-  repl_backlog_first_byte_offset:438077
-  repl_backlog_histlen:343422
-  ```
+$ redis-cli 127.0.0.1 -p 6379 ping
+PONG
+```
+
+``` powershell
+# 查看 master 节点返回的信息，其他 slave 节点返回信息与 master 会不同
+$ redis-cli -h 127.0.0.1 -p 6379 info replication
+# Replication
+role:master
+connected_slaves:2
+slave0:ip=172.17.0.4,port=6379,state=online,offset=781363,lag=1
+slave1:ip=172.17.0.5,port=6379,state=online,offset=781363,lag=1
+master_failover_state:no-failover
+master_replid:9025ed1427964c8cc6bc5c32f5d473680e303f63
+master_replid2:5fa4bbdd4ed13ff18a8b5bf2e61754561278addf
+master_repl_offset:781498
+second_repl_offset:438077
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:438077
+repl_backlog_histlen:343422
+```
+
+##### docker-compose
+
+```yaml
+version: '3.8'
+
+services:
+  redis-1:
+    image: redis:latest
+    container_name: redis-1
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - $REDIS_HOME/redis-1/conf:/etc/redis
+      - $REDIS_HOME/redis-1/data:/data
+      - $REDIS_HOME/redis-1/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+  redis-2:
+    image: redis:latest
+    container_name: redis-2
+    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    ports:
+      - "6380:6379"
+    volumes:
+      - $REDIS_HOME/redis-2/conf:/etc/redis
+      - $REDIS_HOME/redis-2/data:/data
+      - $REDIS_HOME/redis-2/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+  redis-3:
+    image: redis:latest
+    container_name: redis-3
+    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    ports:
+      - "6381:6379"
+    volumes:
+      - $REDIS_HOME/redis-3/conf:/etc/redis
+      - $REDIS_HOME/redis-3/data:/data
+      - $REDIS_HOME/redis-3/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+      - redis-2
+ 
+networks:
+  canary-net:
+    external: true
+```
+
+
 
 ### 3、哨兵模式
 
@@ -283,7 +369,7 @@ dbfilename "dump.rdb"
 
   ``` powershell
   # 哨兵监测 master 节点的ip，替换为 172.17.0.2
-  sentinel monitor mymaster 127.0.0.1 6379 2
+  sentinel monitor mymaster 172.17.0.2 6379 2
   # 日志
   logfile "/var/log/redis/sentinel.log"
   ```
@@ -341,109 +427,239 @@ dbfilename "dump.rdb"
   --network canary-net \
   redis redis-sentinel /etc/redis/sentinel.conf
   ```
-  
-- 验证
 
-  ``` powershell
-  # 分别验证 sentinel-1，sentinel-2, sentinel-3，返回 PONG 说明启动正常
-  $ redis-cli 127.0.0.1 -p 6379 ping
-  PONG
-  ```
+**说明：在 `sentinel.conf` 配置 `sentinel monitor mymaster 172.17.0.2 6379 2` 和 `doker run -itd ` 命令追加 `--sentinel monitor mymaster 172.17.0.2 6379 2` 作用相同，后者执行前需要删除配置文件的配置，否则会因冲突导致 sentinel 无法启动**。另外还可以使用 `redis-cli` 指令方式进行动态修改：
 
-  ``` powershell
-  $ redis-cli -h 127.0.0.1 -p 26379 info sentinel
-  # Sentinel
-  sentinel_masters:1
-  sentinel_tilt:0
-  sentinel_tilt_since_seconds:-1
-  sentinel_running_scripts:0
-  sentinel_scripts_queue_length:0
-  sentinel_simulate_failure_flags:0
-  master0:name=mymaster,status=ok,address=172.17.0.2:6379,slaves=2,sentinels=3
-  ```
+```powershell
+# 删除旧监测节点
+$ redis-cli -h 127.0.0.1 -p 26379 sentinel remove mymaster
+OK
+# 增加新监测节点
+$ redis-cli -h 127.0.0.1 -p 26379 sentinel monitor mymaster 172.17.0.2 6379 2
+OK
+```
 
-- SpringBoot 配置哨兵
+##### 测试
 
-  查看 `sentinel-1`，`sentinel-2`，`sentinel-3` 的 `IP`，下面两条指令效果相同
+``` powershell
+# 分别验证 sentinel-1，sentinel-2, sentinel-3，返回 PONG 说明启动正常
+$ redis-cli 127.0.0.1 -p 6379 ping
+PONG
+```
 
-  ``` powershell
-  $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=sentinel")
-  172.24.0.12
-  172.24.0.11
-  172.24.0.10
-  ```
+``` powershell
+$ redis-cli -h 127.0.0.1 -p 26379 info sentinel
+# Sentinel
+sentinel_masters:1
+sentinel_tilt:0
+sentinel_tilt_since_seconds:-1
+sentinel_running_scripts:0
+sentinel_scripts_queue_length:0
+sentinel_simulate_failure_flags:0
+master0:name=mymaster,status=ok,address=172.17.0.2:6379,slaves=2,sentinels=3
+```
 
-  ```powershell
-  $ docker ps -q --filter "name=sentinel" | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
-  172.24.0.12
-  172.24.0.11
-  172.24.0.10
-  ```
+##### docker-compose
 
-  修改 application-cluster.yaml
+```yaml
+version: '3.8'
 
-  ``` yaml
-  spring:
-    data:
-      redis:
-        password:
-        database: 0
-        # 连接超时时长（毫秒）
-        timeout: 6000ms
-        lettuce:
-          pool:
-            # 连接池最大连接数（使用负值表示没有限制）
-            max-active: 100
-            # 连接池最大阻塞等待时间（使用负值表示没有限制）
-            max-wait: -1ms
-            # 连接池中的最大空闲连接
-            max-idle: 10
-            # 连接池中的最小空闲连接
-            min-idle: 5
-        sentinel:
-          master: mymaster
-          nodes: 172.17.0.5:26379,172.17.0.6:26379,172.17.0.7:26379
-  ```
+services:
+  redis-1:
+    image: redis:latest
+    container_name: redis-1
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - $REDIS_HOME/redis-1/conf:/etc/redis
+      - $REDIS_HOME/redis-1/data:/data
+      - $REDIS_HOME/redis-1/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+  redis-2:
+    image: redis:latest
+    container_name: redis-2
+    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    ports:
+      - "6380:6379"
+    volumes:
+      - $REDIS_HOME/redis-2/conf:/etc/redis
+      - $REDIS_HOME/redis-2/data:/data
+      - $REDIS_HOME/redis-2/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+  redis-3:
+    image: redis:latest
+    container_name: redis-3
+    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    ports:
+      - "6381:6379"
+    volumes:
+      - $REDIS_HOME/redis-3/conf:/etc/redis
+      - $REDIS_HOME/redis-3/data:/data
+      - $REDIS_HOME/redis-3/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+      - redis-2
+  sentinel-1:
+    image: redis:latest
+    container_name: sentinel-1
+    # command: redis-sentinel /etc/redis/sentinel.conf --sentinel monitor mymaster 172.17.0.2 6379 2
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26379:26379"
+    volumes:
+      - $REDIS_HOME/redis-1/conf:/etc/redis
+      - $REDIS_HOME/redis-1/data:/data
+      - $REDIS_HOME/redis-1/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+  sentinel-2:
+    image: redis:latest
+    container_name: sentinel-2
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26380:26379"
+    volumes:
+      - $REDIS_HOME/redis-2/conf:/etc/redis
+      - $REDIS_HOME/redis-2/data:/data
+      - $REDIS_HOME/redis-2/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - sentinel-1
+  sentinel-3:
+    image: redis:latest
+    container_name: sentinel-3
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26381:26379"
+    volumes:
+      - $REDIS_HOME/redis-3/conf:/etc/redis
+      - $REDIS_HOME/redis-3/data:/data
+      - $REDIS_HOME/redis-3/logs:/var/log/redis 
+    privileged: true
+    networks:
+      - canary-net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - sentinel-1
+      - sentinel-2
+ 
+networks:
+  canary-net:
+    external: true
+```
 
-  注意：请务必保证 `springboot` 和 `redis` 哨兵网络可达情况。当使用 `IDEA` 调试哨兵集群的时候，由于是 `docker` 自已定网络部署，所以导致 `springboot` 在获取 `sentinel` 的 `master` 的 `IP` 时获取到了虚拟 `IP`，导致连接失败。所以把 `spring boot` 项目以 `docker` 方式部署。
+**注意：当 `docker-compose.yaml` 哨兵容器 `command` 指令增加了 `--sentinel monitor mymaster 172.17.0.2 6379 2`，当执行 `docker-compose up -d` 前需要删除配置文件的配置，否则会因冲突导致 sentinel 无法启动**。另外还可以使用 `redis-cli` 指令方式进行动态修改：
 
-  
+```powershell
+# 删除旧监测节点
+$ redis-cli -h 127.0.0.1 -p 26379 sentinel remove mymaster
+OK
+# 增加新监测节点
+$ redis-cli -h 127.0.0.1 -p 26379 sentinel monitor mymaster 172.17.0.2 6379 2
+OK
+```
 
-  制作 Dokcerfile
+##### SpringBoot 配置哨兵
 
-  ``` powershell
-  FROM openjdk:17-jdk
-  
-  LABEL image.author="zhaohongliang"
-  
-  WORKDIR /app/canary
-  
-  COPY ./target/canary-0.0.1-SNAPSHOT.jar /app/canary/canary-0.0.1-SNAPSHOT.jar
-  
-  CMD ["java", "-jar", "-Dspring.profiles.active=cluster", "canary-0.0.1-SNAPSHOT.jar"]
-  ```
+查看 `sentinel-1`，`sentinel-2`，`sentinel-3` 的 `IP`，下面两条指令效果相同
 
-  构建镜像
+``` powershell
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=sentinel")
+172.24.0.12
+172.24.0.11
+172.24.0.10
+```
 
-  ``` powershell
-  $ docker build -t canary:cluster .
-  ```
+```powershell
+$ docker ps -q --filter "name=sentinel" | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+172.24.0.12
+172.24.0.11
+172.24.0.10
+```
 
-  启动
+修改 application-cluster.yaml
 
-  ``` powershell
-  $ docker run \
-  -itd \
-  --name canary \
-  -p 8080:8080 \
-  --restart=no \
-  --network=canary-net \
-  -v /etc/localtime:/etc/localtime \
-  -v $PROJECT_HOME/target:/opt/canary canary:cluster
-  ```
+``` yaml
+spring:
+  data:
+    redis:
+      password:
+      database: 0
+      # 连接超时时长（毫秒）
+      timeout: 6000ms
+      lettuce:
+        pool:
+          # 连接池最大连接数（使用负值表示没有限制）
+          max-active: 100
+          # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-wait: -1ms
+          # 连接池中的最大空闲连接
+          max-idle: 10
+          # 连接池中的最小空闲连接
+          min-idle: 5
+      sentinel:
+        master: mymaster
+        nodes: 172.17.0.5:26379,172.17.0.6:26379,172.17.0.7:26379
+```
 
-  
+注意：请务必保证 `springboot` 和 `redis` 哨兵网络可达情况。当使用 `IDEA` 调试哨兵集群的时候，由于是 `docker` 自已定网络部署，所以导致 `springboot` 在获取 `sentinel` 的 `master` 的 `IP` 时获取到了虚拟 `IP`，导致连接失败。所以把 `spring boot` 项目以 `docker` 方式部署。
 
-  
 
-  
+
+制作 Dokcerfile
+
+``` powershell
+FROM openjdk:17-jdk
+
+LABEL image.author="zhaohongliang"
+
+WORKDIR /app/canary
+
+COPY ./target/canary-0.0.1-SNAPSHOT.jar /app/canary/canary-0.0.1-SNAPSHOT.jar
+
+CMD ["java", "-jar", "-Dspring.profiles.active=cluster", "canary-0.0.1-SNAPSHOT.jar"]
+```
+
+构建镜像
+
+``` powershell
+$ docker build -t canary:cluster .
+```
+
+启动
+
+``` powershell
+$ docker run \
+-itd \
+--name canary \
+-p 8080:8080 \
+--restart=no \
+--network=canary-net \
+-v /etc/localtime:/etc/localtime \
+-v $PROJECT_HOME/target:/opt/canary canary:cluster
+```
+
+
+
