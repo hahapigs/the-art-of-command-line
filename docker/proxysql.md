@@ -117,7 +117,7 @@ proxysql/proxysql
 
 ##### Step1：创建监测和管理用户
 
-先在 mysql-1，mysql-2，mysql-3 上创建两个用户，如果已经开启同步复制（不限制数据库），只需要在主服务器上执行，就会自动同步从服务器
+先在 `mysql-1`，`mysql-2`，`mysql-3` 上创建两个用户，如果已经开启同步复制（不限制数据库），只需要在主服务器上执行，就会自动同步从服务器
 
 ``` sql
 create user 'proxy.monitor'@'172.19.0.%' identified by '123456';
@@ -175,7 +175,7 @@ use disk;
 select * from mysql_replication_hostgroups;
 ```
 
-说明：writer_hostgroup 和 reader_hostgroup 写组和读组都要大于 0 且不能相同，我的环境下，写组定义为 10，读组定义为 30
+说明：`writer_hostgroup` 和 ` reader_hostgroup` 写组和读组都要大于 0 且不能相同，我的环境下，写组定义为 10，读组定义为 30
 
 - MGR 高可用读写分离规则
 
@@ -232,7 +232,7 @@ load mysql query rules to runtime;
 save mysql query rules to disk;
 ```
 
-如果想在 ProxySQL 中查看SQL请求路由信息stats_mysql_query_digest
+如果想在 `ProxySQL` 中查看 SQL 请求路由信息 `stats_mysql_query_digest`
 
 ```sql
 select hostgroup,schemaname,username,digest_text,count_star from  stats_mysql_query_digest;
@@ -264,14 +264,14 @@ spring:
     password: 123456
 ```
 
-问题：如果 springboot 启动发现 SQLException: Unknown system variable query_cache_size 异常，则修改 proxysql.cnf 中的 server_version 配置。因为 mysql 8.0 以后取消了 query_cache_size 参数
+问题：如果 `springboot` 启动发现` SQLException: Unknown system variable query_cache_size` 异常，则修改 `proxysql.cnf `中的 `server_version` 配置。因为` mysql 8.0` 以后取消了 `query_cache_size` 参数
 
 ``` tex
 # 修改完重启 proxysql 服务
 server_version="8.0.4"
 ```
 
-也可以在 proxysql 中使用 sql 语句修改
+也可以在 `proxysql` 中使用 `sql` 语句修改
 
 ``` sql
 update global_variables set variable_value="8.0.4 (ProxySQL)" where variable_name='mysql-server_version';
@@ -289,7 +289,7 @@ save mysql variables to disk;
 | proxysql-1 | 172.19.0.5 | 1632、16033、16070 | 6032、6033、6070 | proxysql-1 |
 | proxysql-2 | 172.19.0.6 | 2632、26033、26070 | 6032、6033、6070 | proxysql-2 |
 
-创建 redis-1, redis-2, redis-3 的工作目录
+创建 `proxysql-1`, `proxysql-2` 的工作目录
 
 ``` powershell
 $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
@@ -297,7 +297,7 @@ $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
 
 - proxysql-1
 
-   配置 proxysql.cnf，启动
+  先把单机 `proxysql.cnf` 配置拷贝用来启动 `proxysql-1`，启动成功后再修改为集群配置
 
   ``` powershell
   $ docker run \
@@ -316,7 +316,7 @@ $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
 
 - proxysql-2
 
-  配置 proxysql.cnf，启动
+  先把单机 `proxysql.cnf` 配置拷贝用来启动 `proxysql-2`，启动成功后再修改为集群配置
 
   ``` powershell
   $ docker run \
@@ -337,6 +337,22 @@ $ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
 
 ``` powershell
 $ docker ps -q --filter "name=proxysql"
+```
+
+说明：因为 `docker` 构建的容器无法预知 `IP`，所以先构建两个独立的 `proxysql` 容器，待启动成功后再修改为集群的配置。
+
+查看 `proxysql-1`，`proxysql-2` 的 `IP`，下面两条指令效果相同
+
+```powershell
+$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=proxysql")
+172.24.0.5
+172.24.0.6
+```
+
+```powershell
+$ docker ps -q --filter "name=proxysql" | xargs docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+172.24.0.5
+172.24.0.6
 ```
 
 ###### 修改配置
@@ -407,7 +423,7 @@ proxysql_servers =
 )
 ```
 
-将修改后的配置分别 copy 到 proxysql-1，proxysql-2 的 cnf
+将修改后的配置分别 `copy` 到 `proxysql-1`，`proxysql-2` 的 `conf` 文件夹
 
 ``` powershell
 ##### 利用 MacOS pbcopy 和 pbpaste 处理，其他系统请逐一拷贝
@@ -417,17 +433,17 @@ $ pbcopy < proxysql.cnf
 $ pbpaste > $PROXYSQL_HOME/proxysql{-1, -2}/conf/sentinel.cnf
 ```
 
-然后删除旧 proxysql.db 数据<font color="red">（非常重要）</font> 
+然后删除旧 `proxysql.db` 数据<font color="red">（非常重要）</font>，如果不删除配置不会生效
 
 ``` powershell
 $ rmdir $PROXYSQL_HOME/proxysql{-1, -2}/data/
 ```
 
-重新启动 proxysql-1， proxysql-2
+重新启动 `proxysql-1`， `proxysql-2`
 
 ``` powershell
 $ docker restart `docker ps -a | grep proxysql | awk -F " " '{print $1}' `
 ```
 
-说明： `后续的 step1~8 配置，只需要在 proxysql-1 执行，proxysql-2 会自动拉取配置`
+**说明：在 `proxysql-1` 执行 `step1~8`，`proxysql-2` 会自动拉取配置**
 
