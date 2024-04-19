@@ -89,8 +89,8 @@ $ docker run \
 -v /etc/localtime:/etc/localtime
 -e MYSQL_ROOT_PASSWORD=123456	\
 --restart always \
---network canary-net \
 --privileged=true \
+--network canary-net \
 mysql8.0
 
 # 如果不随系统一起启动，则设置 --restart no，也可以在创建完容器再修改
@@ -174,8 +174,8 @@ $ mkdir -p $MYSQL_HOME/mysql{-1, -2, -3}/conf
   -v /etc/localtime:/etc/localtime \
   -e MYSQL_ROOT_PASSWORD=123456   \
   --restart no \
-  --network canary-net \
   --privileged=true \
+  --network canary-net \
   mysql
   ```
 
@@ -240,8 +240,8 @@ $ mkdir -p $MYSQL_HOME/mysql{-1, -2, -3}/conf
   -v /etc/localtime:/etc/localtime \
   -e MYSQL_ROOT_PASSWORD=123456   \
   --restart no \
-  --network canary-net \
   --privileged=true \
+  --network canary-net \
   mysql
   ```
 
@@ -290,7 +290,7 @@ $ mkdir -p $MYSQL_HOME/mysql{-1, -2, -3}/conf
   $ mycli -h 127.0.0.1 -P 3307 -u root -e "STOP REPLICA IO_THREAD FOR CHANNEL '';"
   ```
 
-- mysql-2
+- mysql-3
 
   **两台 `slave` 操作相同，此处省略 `mysql-2` 的操作**
 
