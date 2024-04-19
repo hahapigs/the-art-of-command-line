@@ -102,14 +102,6 @@ $ docker logs -f redis
 
 ```
 
-##### DockerFile
-
-``` powershell
-
-```
-
-
-
 ### 2、主从复制
 
 | 名称    | IP         | 宿主端口 | 端口 | 备注   |
