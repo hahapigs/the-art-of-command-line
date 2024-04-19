@@ -53,7 +53,7 @@ $ export PROXYSQL_HOME="/srv/proxysql"
 | mysql-3  | 172.19.0.4 | 3308               | 3306             | slave    |
 | proxysql | 172.19.0.5 | 1632、16033、16070 | 6032、6033、6070 | proxysql |
 
-##### 编写配置
+###### 编写配置
 
 ``` powershell
 datadir="/var/lib/proxysql"
@@ -289,7 +289,57 @@ save mysql variables to disk;
 | proxysql-1 | 172.19.0.5 | 1632、16033、16070 | 6032、6033、6070 | proxysql-1 |
 | proxysql-2 | 172.19.0.6 | 2632、26033、26070 | 6032、6033、6070 | proxysql-2 |
 
-##### 编写配置
+创建 redis-1, redis-2, redis-3 的工作目录
+
+``` powershell
+$ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
+```
+
+- proxysql-1
+
+   配置 proxysql.cnf，启动
+
+  ``` powershell
+  $ docker run \
+  -itd \
+  --name proxysql-1 \
+  -p 16032:6032 \
+  -p 16033:6033 \
+  -p 16070:6070 \
+  -v $PROXYSQL_HOME/proxysql-1/conf/proxysql.cnf:/etc/proxysql.cnf \
+  -v $PROXYSQL_HOME/proxysql-1/data:/var/lib/proxysql \
+  -v $PROXYSQL_HOME/proxysql-1/logs:/var/log/proxysql \
+  --restart no \
+  --privileged=true \
+  proxysql/proxysql
+  ```
+
+- proxysql-2
+
+  配置 proxysql.cnf，启动
+
+  ``` powershell
+  $ docker run \
+  -itd \
+  --name proxysql-2 \
+  -p 26032:6032 \
+  -p 26033:6033 \
+  -p 26070:6070 \
+  -v $PROXYSQL_HOME/proxysql-2/conf/proxysql.cnf:/etc/proxysql.cnf \
+  -v $PROXYSQL_HOME/proxysql-2/data:/var/lib/proxysql \
+  -v $PROXYSQL_HOME/proxysql-2/logs:/var/log/proxysql \
+  --restart no \
+  --privileged=true \
+  proxysql/proxysql
+  ```
+
+启动后，监测是否正常启动
+
+``` powershell
+$ docker ps -q --filter "name=proxysql"
+```
+
+###### 修改配置
 
 ``` powershell
 datadir="/var/lib/proxysql"
@@ -367,38 +417,17 @@ $ pbcopy < proxysql.cnf
 $ pbpaste > $PROXYSQL_HOME/proxysql{-1, -2}/conf/sentinel.cnf
 ```
 
-- proxysql-1
+然后删除旧 proxysql.db 数据<font color="red">（非常重要）</font> 
 
-  ``` powershell
-  $ docker run \
-  -itd \
-  --name proxysql-2 \
-  -p 16032:6032 \
-  -p 16033:6033 \
-  -p 16070:6070 \
-  -v $PROXYSQL_HOME/proxysql-1/conf/proxysql.cnf:/etc/proxysql.cnf \
-  -v $PROXYSQL_HOME/proxysql-1/data:/var/lib/proxysql \
-  -v $PROXYSQL_HOME/proxysql-1/logs:/var/log/proxysql \
-  --restart no \
-  --privileged=true \
-  proxysql/proxysql
-  ```
+``` powershell
+$ rmdir $PROXYSQL_HOME/proxysql{-1, -2}/data/
+```
 
-- proxysql-2
+重新启动 proxysql-1， proxysql-2
 
-  ``` powershell
-  $ docker run \
-  -itd \
-  --name proxysql-2 \
-  -p 16032:6032 \
-  -p 16033:6033 \
-  -p 16070:6070 \
-  -v $PROXYSQL_HOME/proxysql-2/conf/proxysql.cnf:/etc/proxysql.cnf \
-  -v $PROXYSQL_HOME/proxysql-2/data:/var/lib/proxysql \
-  -v $PROXYSQL_HOME/proxysql-2/logs:/var/log/proxysql \
-  --restart no \
-  --privileged=true \
-  proxysql/proxysql
-  ```
+``` powershell
+$ docker restart `docker ps -a | grep proxysql | awk -F " " '{print $1}' `
+```
 
-说明：后续的配置只需要在 proxysql-1 执行，proxysql-2 会自动拉取配置。
+说明： `后续的 step1~8 配置，只需要在 proxysql-1 执行，proxysql-2 会自动拉取配置`
+
