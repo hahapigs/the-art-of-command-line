@@ -21,7 +21,18 @@ $ export REDIS_HOME=/srv/redis
 <font color="#e83e8c">REDIS_HOME</font> 推荐附加设置在 shell 中
 
 - bash	<font color="#e83e8c"> ~/.bash_profile</font>
+
 - zsh       <font color="#e83e8c">~/.zshrc</font>
+
+  
+
+| 本地位置         | 容器位置       | 使用     |
+| ---------------- | -------------- | -------- |
+| $REDIS_HOME/conf | /etc/redis     | 配置文件 |
+| $REDIS_HOME/data | /data          | 数据     |
+| $REDIS_HOME/logs | /var/log/redis | 日志     |
+
+
 
 ### 1、单机（standalone）
 
@@ -33,9 +44,16 @@ bind 0.0.0.0
 port 6379
 protected-mode no
 slave-read-only no
+logfile "/var/log/redis/redis.log"
 ```
 
-###### docker run
+也可以使用官方的 redis.conf
+
+``` powershell
+$ wget http://download.redis.io/redis-stable/redis.conf
+```
+
+##### docker run
 
 ``` powershell
 # 创建容器
@@ -45,6 +63,7 @@ $ docker run \
 -p 6379:6379 \
 -v $REDIS_HOME/conf:/etc/redis \
 -v $REDIS_HOME/data:/data \
+-v $REDIS_HOME/logs:/var/log/redis \
 --restart no \
 --privileged=true \
 redis redis-server /etc/redis/redis.conf
@@ -74,97 +93,113 @@ $ docker logs -f redis
 
 ##### redis
 
+创建 redis-1, redis-2, redis-3 的工作目录
+
 ``` powershell
-# 创建目录
 $ mkdir -p $REDIS_HOME/redis{-1, -2, -3}/conf
 ```
 
 - redis-1
 
-  ``` powershell
-  # 配置
-  $ vim $REDIS_HOME/redis-1/conf/redis.conf
-  ```
-  
+  编写配置
+
   ``` powershell
   # redis-1
   bind 0.0.0.0
   port 6379
   protected-mode no
   slave-read-only no
+  logfile "/var/log/redis/redis.log"
   ```
 
+  启动
+
   ``` powershell
-  # 启动
   $ docker run \
   -itd \
   --name redis-1 \
   -p 6379:6379 \
   -v $REDIS_HOME/redis-1/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-1/data:/data \
+  -v $REDIS_HOME/logs:/var/log/redis \
   --restart no \
   --privileged=true \
   redis redis-server /etc/redis/redis.conf
   ```
 
 - redis-2
-  ``` powershell
+  
+   查看主机IP
+  
+	``` powershell
   # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
   $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
-	# 配置
-  $ vim $REDIS_HOME/redis-2/conf/redis.conf
+  172.17.0.2
   ```
   
-  ``` powershell
+  编写配置
+  
+``` powershell
   # redis-2
   bind 0.0.0.0
   port 6379
 protected-mode no
   slave-read-only no
   slaveof 172.17.0.2 6379
+  logfile "/var/log/redis/redis.log"
   ```
-
-  ``` powershell
+  
+  启动
+  
+``` powershell
   $ docker run \
   -itd \
   --name redis-2 \
-  -p 6380:6379 \
+-p 6380:6379 \
   -v $REDIS_HOME/redis-2/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-2/data:/data \
---restart no \
+  -v $REDIS_HOME/logs:/var/log/redis \
+  --restart no \
   --privileged=true \
   redis redis-server /etc/redis/redis.conf
   ```
-
+  
 - redis-3
+  
+  查看主机IP
+  
   ``` powershell
   # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
   $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
-  # 配置
-  $ vim $REDIS_HOME/redis-2/conf/redis.conf
-  ```
-
+```
+  
+  编写配置
+  
   ``` powershell
   # redis-3
   bind 0.0.0.0
   port 6379
   protected-mode no
-  slave-read-only no
+slave-read-only no
   slaveof 172.17.0.2 6379
+  logfile "/var/log/redis/redis.log"
   ```
-
+  
+  启动
+  
   ``` powershell
   $ docker run \
   -itd \
   --name redis-3 \
   -p 6381:6379 \
-  -v $REDIS_HOME/redis-3/conf/redis.conf:/etc/redis/redis.conf \
+-v $REDIS_HOME/redis-3/conf/redis.conf:/etc/redis/redis.conf \
   -v $REDIS_HOME/redis-3/data:/data \
+  -v $REDIS_HOME/logs:/var/log/redis \
   --restart no \
   --privileged=true \
   redis redis-server /etc/redis/redis.conf
   ```
-
+  
 - 验证
 
   ``` powershell
@@ -198,19 +233,31 @@ protected-mode no
 
 - sentinel-1
 
+  下载配置
+
   ``` powershell
   # 下载 sentinel.conf
   $ wget http://download.redis.io/redis-stable/sentinel.conf
-  # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
-  $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
-  # 修改配置
-  $ vim sentinel.conf
   ```
 
+  查看主机IP
+
+   ``` powershell
+  # 查看 redis-master 主机ip, 假设IP为 172.17.0.2
+  $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-1
+  172.17.0.2
+   ```
+
+  修改配置
+
   ``` powershell
-  # 替换ip
-  $ sentinel monitor mymaster 127.0.0.1 6379 2
+  # 哨兵监测 master 节点的ip，替换为 172.17.0.2
+  sentinel monitor mymaster 127.0.0.1 6379 2
+  # 日志
+  logfile "/var/log/redis/sentinel.log"
   ```
+
+  将修改后的配置分别 copy 到 redis-1, redis-2, redis-3 的 conf
 
   ``` powershell
   ##### 利用 MacOS pbcopy 和 pbpaste 处理，其他系统请逐一拷贝
@@ -220,14 +267,16 @@ protected-mode no
   $ pbpaste > $REDIS_HOME/redis{-1, -2, -3}/conf/sentinel.conf
   ```
 
+  启动
+
   ``` powershell
-  # 启动
   $ docker run \
   -itd \
   --name sentinel-1 \
   -p 26379:26379 \
   -v $REDIS_HOME/redis-1/conf/sentinel.conf:/etc/redis/sentinel.conf \
   -v $REDIS_HOME/redis-1/data:/data \
+  -v $REDIS_HOME/logs:/var/log/redis \
   --restart no \
   --privileged=true \
   redis redis-sentinel /etc/redis/sentinel.conf
@@ -241,11 +290,12 @@ protected-mode no
   -p 26380:26379 \
   -v $REDIS_HOME/redis-2/conf/sentinel.conf:/etc/redis/sentinel.conf \
 -v $REDIS_HOME/redis-2/data:/data \
+  -v $REDIS_HOME/logs:/var/log/redis \
   --restart no \
   --privileged=true \
   redis redis-sentinel /etc/redis/sentinel.conf
-  ```
-
+```
+	 
 - sentinel-3
 	
   ``` powershell
@@ -255,6 +305,7 @@ protected-mode no
   -p 26381:26379 \
 -v $REDIS_HOME/redis-3/conf/sentinel.conf:/etc/redis/sentinel.conf \
   -v $REDIS_HOME/redis-3/data:/data \
+  -v $REDIS_HOME/logs:/var/log/redis \
   --restart no \
   --privileged=true \
   redis redis-sentinel /etc/redis/sentinel.conf
@@ -265,6 +316,7 @@ protected-mode no
   ``` powershell
   # 分别验证 sentinel-1，sentinel-2, sentinel-3，返回 PONG 说明启动正常
   $ redis-cli 127.0.0.1 -p 6379 ping
+  PONG
   ```
 
   ``` powershell
@@ -279,12 +331,11 @@ protected-mode no
   master0:name=mymaster,status=ok,address=172.17.0.2:6379,slaves=2,sentinels=3
   ```
 
-  
-
 - SpringBoot 配置哨兵
 
+  查看 sentinel-1，sentinel-2, sentinel-3 的 IP
+
   ``` powershell
-  # 查看 sentinel-1，sentinel-2, sentinel-3 ip
   $ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q --filter "name=sentinel")
   172.24.0.12
   172.24.0.11
@@ -297,7 +348,7 @@ protected-mode no
   172.24.0.10
   ```
 
-  application-cluster.yaml
+  修改 application-cluster.yaml
 
   ``` yaml
   spring:
@@ -324,10 +375,14 @@ protected-mode no
 
   注意：请务必保证 springboot 和 redis 哨兵网络可达情况。当使用 IDEA 调试哨兵集群的时候，由于是 docker 自已定网络部署，所以导致 springboot 在获取 sentinel 的 master IP 获取到了 master 的虚拟 IP，导致连接失败。所以把 spring boot 项目做成 docker 容器。
 
-  Dokcerfile
+  
+
+  制作 Dokcerfile
 
   ``` powershell
   FROM openjdk:17-jdk
+  
+  LABEL image.author="zhaohongliang"
   
   WORKDIR /app/canary
   
@@ -336,8 +391,16 @@ protected-mode no
   CMD ["java", "-jar", "-Dspring.profiles.active=cluster", "canary-0.0.1-SNAPSHOT.jar"]
   ```
 
+  构建镜像
+
   ``` powershell
-  docker run \
+  $ docker build -t canary:cluster .
+  ```
+
+  启动
+
+  ``` powershell
+  $ docker run \
   -itd \
   --name canary \
   -p 8080:8080 \
