@@ -49,7 +49,7 @@ $ export REDIS_HOME="/srv/redis"
 
 ### 1、单机（standalone）
 
-##### 编写配置
+###### 编写配置
 
 ``` powershell
 # redis
