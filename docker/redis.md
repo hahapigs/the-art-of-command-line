@@ -122,8 +122,6 @@ services:
 $ docker-compose up -d
 ```
 
-
-
 ### 2、主从复制
 
 | 名称    | IP         | 宿主端口 | 端口 | 备注   |
@@ -192,7 +190,7 @@ protected-mode no
   logfile "/var/log/redis/redis.log"
   
   # 开启复制
-  # slaveof 172.17.0.2 6379
+  # replicaof 172.17.0.2 6379
   ```
 
   启动
@@ -208,7 +206,7 @@ $ docker run \
   --restart no \
   --privileged=true \
   --network canary-net \
-  redis redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+  redis redis-server /etc/redis/redis.conf --replicaof redis-1 6379
   ```
   
 - redis-3
@@ -225,7 +223,7 @@ port 6379
   logfile "/var/log/redis/redis.log"
   
   # 开启复制
-  # slaveof 172.17.0.2 6379
+  # replicaof 172.17.0.2 6379
   ```
 
   启动
@@ -241,17 +239,8 @@ port 6379
   --restart no \
 --privileged=true \
   --network canary-net \
-  redis redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+  redis redis-server /etc/redis/redis.conf --replicaof redis-1 6379
   ```
-
-**说明：在 `redis.conf` 配置 `--slaveof 172.17.0.2 6379` 和 `doker run -itd ` 命令追加 `--slaveof redis-1 6379` 作用相同，推荐使用后者**。另外还可以使用 redis-cli 指令方式执行：
-
-```powershell
-$ redis-cli -h 127.0.0.1 -p 6380 slaveof 172.17.0.2 6379
-OK
-$ redis-cli -h 127.0.0.1 -p 6381 slaveof 172.17.0.2 6379
-OK
-```
 
 ##### 测试
 
@@ -302,7 +291,7 @@ services:
   redis-2:
     image: redis:latest
     container_name: redis-2
-    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    command: redis-server /etc/redis/redis.conf --replicaof redis-1 6379
     ports:
       - "6380:6379"
     volumes:
@@ -317,7 +306,7 @@ services:
   redis-3:
     image: redis:latest
     container_name: redis-3
-    command: redis-server /etc/redis/redis.conf --slaveof redis-1 6379
+    command: redis-server /etc/redis/redis.conf --replicaof redis-1 6379
     ports:
       - "6381:6379"
     volumes:
@@ -335,6 +324,71 @@ networks:
   canary-net:
     external: true
 ```
+
+开启主从复制的几种方式：
+
+- `redis.cnf` 配置 `replicaof <ip> <port>`
+
+  ```powershell
+  slaveof 172.17.0.2 6379
+  ```
+
+- `docker run -itd` 命令追加 `--replicaof <hostname/ip> <port>`
+
+  ```powershell
+  $ docker run -itd --name redis-2 -p 6379:6379 redis redis-server /etc/redis/redis.conf --replicaof redis-1 6379
+  ```
+
+- `docker-compose.yaml` 配置 `--replicaof <hostname/ip> <port>`
+
+  ```yaml
+  version: '3.8'
+  services:
+    redis-2:
+      image: redis:latest
+      container_name: redis-2
+      command: redis-server /etc/redis/redis.conf --replicaof redis-1 6379
+      ports:
+        - "6380:6379"
+  ```
+
+- `redis-cli ` 执行 `replicaof <ip> <port>`
+
+  ``` powershell
+  $ redis-cli -h 127.0.0.1 -p 6380 slaveof 172.17.0.2 6379
+  OK
+  ```
+
+
+
+##### 拓展：
+
+`docker-compose` 方式会在 `redis.conf` 自动追加一些配置
+
+```powershell
+······
+# 省略了其他配置
+
+latency-tracking-info-percentiles 50 99 99.9
+save 3600 1
+save 300 100
+save 60 10000
+user default on nopass sanitize-payload ~* &* +@all
+```
+
+这个文本片段看起来是在描述一些Redis的配置或指令，逐个解释一下：
+
+1. `latency-tracking-info-percentiles 50 99 99.9`: 这是在配置 `Redis` 实例对命令执行时延的跟踪信息百分位数。在这种情况下，Redis将会记录并报告各种操作的延迟，涵盖了 `50%`，`99%` 和 `99.9%` 的情况。
+
+2. `save 3600 1`: 这是设置Redis进行自动快照（snapshot）持久化的规则。在这里，`Redis` 会在至少1个键变化并且距上一个快照已经过去 `3600秒`（1小时）后自动进行快照持久化。
+
+3. `save 300 100`: 这是另一个设置自动快照的规则。在这里，`Redis` 会在至少 `100个` 键变化并且距上一个快照已经过去 `300秒` 后自动进行快照持久化。
+
+4. `save 60 10000`: 这也是设置自动快照的规则。在这里，`Redis` 会在至少 `10000个` 键变化并且距上一个快照已经过去 `60秒` 后自动进行快照持久化。
+
+5. `user default on nopass sanitize-payload ~* &* +@all`: 看起来是在描述一个用户或者访问控制规则。这个规则可能是关于一个名为 `default` 的用户，启用了某些功能，禁用了密码保护，并对特定类型的数据进行了处理。`~* &* +@all ` 可能是一些正则表达式或者标识符，用于匹配操作的数据。
+
+总的来说，这些内容是关于 Redis 实例的一些配置参数和规则的描述，涵盖了延迟跟踪、自动快照持久化和用户访问控制等方面。
 
 
 
@@ -427,17 +481,6 @@ networks:
   --network canary-net \
   redis redis-sentinel /etc/redis/sentinel.conf
   ```
-
-**说明：在 `sentinel.conf` 配置 `sentinel monitor mymaster 172.17.0.2 6379 2` 和 `doker run -itd ` 命令追加 `--sentinel monitor mymaster 172.17.0.2 6379 2` 作用相同，后者执行前需要删除配置文件的配置，否则会因冲突导致 sentinel 无法启动**。另外还可以使用 `redis-cli` 指令方式进行动态修改：
-
-```powershell
-# 删除旧监测节点
-$ redis-cli -h 127.0.0.1 -p 26379 sentinel remove mymaster
-OK
-# 增加新监测节点
-$ redis-cli -h 127.0.0.1 -p 26379 sentinel monitor mymaster 172.17.0.2 6379 2
-OK
-```
 
 ##### 测试
 
@@ -570,16 +613,92 @@ networks:
     external: true
 ```
 
-**注意：当 `docker-compose.yaml` 哨兵容器 `command` 指令增加了 `--sentinel monitor mymaster 172.17.0.2 6379 2`，当执行 `docker-compose up -d` 前需要删除配置文件的配置，否则会因冲突导致 sentinel 无法启动**。另外还可以使用 `redis-cli` 指令方式进行动态修改：
+开启哨兵监测节点几种方式：
+
+- `sentinel.conf` 配置 `sentinel monitor <master-group-name> <ip> <port> <quorum>`
+
+  ```powershell
+  sentinel monitor mymaster 172.17.0.2 6379 2
+  ```
+
+- `docker run -itd` 命令追加 `--sentinel monitor <master-group-name> <ip> <port> <quorum>`
+
+  ```powershell
+  $ docker run -itd --name sentinel-1 -p 6379:6379 redis redis-sentinel /etc/redis/sentinel.conf --sentinel monitor mymaster 172.17.0.2 6379 2
+  ```
+
+- `docker-compose.yaml` 配置 `--sentinel monitor <master-group-name> <ip> <port> <quorum>`
+
+  ```yaml
+  version: '3.8'
+  services:
+    sentinel-1:
+      image: redis:latest
+      container_name: sentinel-3
+      command: redis-sentinel /etc/redis/sentinel.conf --sentinel monitor mymaster 172.17.0.2 6379 2
+      ports:
+        - "26379:26379"
+  ```
+
+- `redis-cli ` 执行 `sentinel remove <master-group-name>` 和 `--sentinel monitor <master-group-name> <ip> <port> <quorum>`
+
+  ``` powershell
+  # 删除旧监测节点
+  $ redis-cli -h 127.0.0.1 -p 26379 sentinel remove mymaster
+  OK
+  # 增加新监测节点
+  $ redis-cli -h 127.0.0.1 -p 26379 sentinel monitor mymaster 172.17.0.2 6379 2
+  OK
+  ```
+
+**注意：使用 `docker run` 和 `docker-compose` 追加 `--sentinel monitor <master-group-name> <ip> <port> <quorum>` 指令，需要删除配置文件的配置，否则可能会因冲突导致 `sentinel` 无法启动**。
+
+
+
+##### 拓展：
+
+`docker-compose` 方式会在 `sentinel.conf` 自动追加一些配置
 
 ```powershell
-# 删除旧监测节点
-$ redis-cli -h 127.0.0.1 -p 26379 sentinel remove mymaster
-OK
-# 增加新监测节点
-$ redis-cli -h 127.0.0.1 -p 26379 sentinel monitor mymaster 172.17.0.2 6379 2
-OK
+······
+# 省略了其他配置
+
+latency-tracking-info-percentiles 50 99 99.9
+user default on nopass ~* &* +@all
+sentinel myid 30cff15eb85b3a07f1eda5b29e7e600c66d14e53
+
+sentinel current-epoch 0
+
+sentinel monitor mymaster 172.24.0.7 6379 2
+sentinel config-epoch mymaster 0
+sentinel leader-epoch mymaster 0
+
+sentinel known-replica mymaster 172.24.0.9 6379
+
+sentinel known-replica mymaster 172.24.0.8 6379
+
+sentinel known-sentinel mymaster 172.24.0.12 26379 25841504a84073fe84f6a1e5583f2485576e3fa0
+
+sentinel known-sentinel mymaster 172.24.0.11 26379 3bec2a84beecd981d67e50b7226d47ce23a4ea7e
 ```
+
+这些是关于 `Redis Sentinel` 的配置信息。让我们逐个解释一下这些内容：
+
+1. `latency-tracking-info-percentiles 50 99 99.9`: 这条指令用于配置 `Redis Sentinel` 跟踪监控命令执行的延迟情况的百分位数，其中包括了 `50%`，`99%`，`99.9%` 这三个百分位数。
+
+2. `user default on nopass ~* &* +@all`: 这条指令可能是对用户访问控制的配置，其中设置了一个名为 `default` 的用户，并开启了相关功能。`~* &* +@all ` 是用于匹配操作的一些规则。
+
+3. `sentinel myid 30cff15eb85b3a07f1eda5b29e7e600c66d14e53`: 这个指令设置了 `Sentinel` 进程的唯一标识符（ID）为`30cff15eb85b3a07f1eda5b29e7e600c66d14e53`。
+
+4. `sentinel current-epoch 0`: 这个指令设置了当前的 `Sentinel` 实例的 epoch（纪元）为 0。
+
+5. `sentinel monitor mymaster 172.24.0.7 6379 2`: 这个指令是用于让 `Sentinel` 监视名为 `mymaster` 的主节点，`IP` 地址为`172.24.0.7`，端口为 `6379`，并设置 `最小投票数量 `为 2。
+
+6. 其余的 `sentinel known-replica` 和 `sentinel known-sentinel` 指令则用于告知 `Sentine`l 已知的从节点和其他 `Sentinel` 的信息，包括它们的 IP 地址、端口和一些标识符等。
+
+这些配置信息反映了 Redis Sentinel 系统的监控和故障转移配置。通过这些配置，Sentinel 可以监控主节点和从节点的状态，并根据需要执行故障转移操作。希望这个解释对您有所帮助。如果您有任何进一步的问题，请随时提出。
+
+
 
 ##### SpringBoot 配置哨兵
 
@@ -628,7 +747,7 @@ spring:
 
 
 
-制作 Dokcerfile
+###### Springboot 制作 Dokcerfile
 
 ``` powershell
 FROM openjdk:17-jdk
