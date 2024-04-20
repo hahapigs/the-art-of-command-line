@@ -330,7 +330,7 @@ networks:
 - `redis.cnf` 配置 `replicaof <ip> <port>`
 
   ```powershell
-  slaveof 172.17.0.2 6379
+  replicaof 172.17.0.2 6379
   ```
 
 - `docker run -itd` 命令追加 `--replicaof <hostname/ip> <port>`
@@ -355,9 +355,11 @@ networks:
 - `redis-cli ` 执行 `replicaof <ip> <port>`
 
   ``` powershell
-  $ redis-cli -h 127.0.0.1 -p 6380 slaveof 172.17.0.2 6379
+  $ redis-cli -h 127.0.0.1 -p 6380 replicaof 172.17.0.2 6379
   OK
   ```
+
+**说明：在 `Redis` 中，`salveof` 和 `replicaof` 是用于配置主从复制关系的命令，它们的作用是相同的，只是在 `Redis 6.0` 之后，将 `slaveof` 命令更名为 `replicaof` ，因为它更加清晰和直观，反映了从节点是主节点的复制节点的特性。如果您使用的是较旧的 `Redis` 版本，可能还会看到 `slaveof` 命令，但为了保持一致性和准确性，建议使用 `replicaof` 命令。**
 
 
 
