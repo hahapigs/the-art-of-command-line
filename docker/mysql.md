@@ -332,7 +332,7 @@ $ docker network inspect canary-net | jq -r '.[0].IPAM.Config.[0].Subnet'
   ``` powershell
   [mysqld]
   ······ 
-  # 此处省略了 mysql 的配置，把下面的配置 copy 到 my.cnf
+  # 此处省略了其它配置，把下面的配置 copy 到 my.cnf
   
   # 全局事务
   gtid_mode = ON
