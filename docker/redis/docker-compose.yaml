@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  redis-1:
+    image: redis:latest
+    container_name: redis-1
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - $REDIS_HOME/redis-1/conf:/etc/redis
+      - $REDIS_HOME/redis-1/data:/data
+      - $REDIS_HOME/redis-1/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+  redis-2:
+    image: redis:latest
+    container_name: redis-2
+    command: redis-server /etc/redis/redis.conf --replicaof redis-1 6379
+    ports:
+      - "6380:6379"
+    volumes:
+      - $REDIS_HOME/redis-2/conf:/etc/redis
+      - $REDIS_HOME/redis-2/data:/data
+      - $REDIS_HOME/redis-2/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - redis-1
+  redis-3:
+    image: redis:latest
+    container_name: redis-3
+    command: redis-server /etc/redis/redis.conf --replicaof redis-1 6379
+    ports:
+      - "6381:6379"
+    volumes:
+      - $REDIS_HOME/redis-3/conf:/etc/redis
+      - $REDIS_HOME/redis-3/data:/data
+      - $REDIS_HOME/redis-3/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - redis-1
+      - redis-2
+  sentinel-1:
+    image: redis:latest
+    container_name: sentinel-1
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26379:26379"
+    volumes:
+      - $REDIS_HOME/redis-1/conf:/etc/redis
+      - $REDIS_HOME/redis-1/data:/data
+      - $REDIS_HOME/redis-1/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+  sentinel-2:
+    image: redis:latest
+    container_name: sentinel-2
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26380:26379"
+    volumes:
+      - $REDIS_HOME/redis-2/conf:/etc/redis
+      - $REDIS_HOME/redis-2/data:/data
+      - $REDIS_HOME/redis-2/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - sentinel-1
+  sentinel-3:
+    image: redis:latest
+    container_name: sentinel-3
+    command: redis-sentinel /etc/redis/sentinel.conf
+    ports:
+      - "26381:26379"
+    volumes:
+      - $REDIS_HOME/redis-3/conf:/etc/redis
+      - $REDIS_HOME/redis-3/data:/data
+      - $REDIS_HOME/redis-3/logs:/var/log/redis
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - redis-1
+      - redis-2
+      - redis-3
+      - sentinel-1
+      - sentinel-2
+
+networks:
+  example_net:
+    driver: bridge
+    # external: true
