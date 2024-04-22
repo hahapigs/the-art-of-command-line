@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql-1:
+    image: mysql:latest
+    container_name: mysql-1
+    ports:
+      - "3306:3306"
+    volumes:
+      - $MYSQL_HOME/mysql-1/conf:/etc/mysql/conf.d
+      - $MYSQL_HOME/mysql-1/data:/var/lib/mysql
+      - $MYSQL_HOME/mysql-1/logs:/var/log/mysql
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    privileged: true
+    networks:
+      - example_net
+  mysql-2:
+    image: mysql:latest
+    container_name: mysql-2
+    ports:
+      - "3307:3306"
+    volumes:
+      - $MYSQL_HOME/mysql-2/conf:/etc/mysql/conf.d
+      - $MYSQL_HOME/mysql-2/data:/var/lib/mysql
+      - $MYSQL_HOME/mysql-2/logs:/var/log/mysql
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - mysql-1
+  mysql-3:
+    image: mysql:latest
+    container_name: mysql-3
+    ports:
+      - "3308:3306"
+    volumes:
+      - $MYSQL_HOME/mysql-3/conf:/etc/mysql/conf.d
+      - $MYSQL_HOME/mysql-3/data:/var/lib/mysql
+      - $MYSQL_HOME/mysql-3/logs:/var/log/mysql
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    privileged: true
+    networks:
+      - example_net
+    depends_on:
+      - mysql-1
+      - mysql-2
+  
+networks:
+  example_net:
+    driver: bridge
+    # external: true 
