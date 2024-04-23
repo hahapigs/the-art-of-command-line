@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  proxysql-1:
+    image: proxysql/proxysql:latest
+    container_name: proxysql-1
+    ports:
+      - "16032:6032"
+      - "16033:6033"
+      - "16070:6070"
+    volumes:
+      - $PROXYSQL_HOME/proxysql-1/conf/proxysql.cnf:/etc/proxysql.cnf
+      - $PROXYSQL_HOME/proxysql-1/data:/var/lib/proxysql
+      - $PROXYSQL_HOME/proxysql-1/logs:/var/log/proxysql
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+  proxysql-2:
+    image: proxysql/proxysql:latest
+    container_name: proxysql-2
+    ports:
+      - "26032:6032"
+      - "26033:6033"
+      - "26070:6070"
+    volumes:
+      - $PROXYSQL_HOME/proxysql-2/conf/proxysql.cnf:/etc/proxysql.cnf
+      - $PROXYSQL_HOME/proxysql-2/data:/var/lib/proxysql
+      - $PROXYSQL_HOME/proxysql-2/logs:/var/log/proxysql
+      - /etc/localtime:/etc/localtime:ro
+    privileged: true
+    networks:
+      - example_net
+  
+networks:
+  example_net:
+    driver: bridge

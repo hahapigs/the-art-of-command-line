@@ -77,8 +77,8 @@ mysql_variables=
     stacksize=1048576
     server_version="8.0.4"
     connect_timeout_server=3000
-    monitor_username="proxy.monitor" 						# 监控账号
-    monitor_password="123456" 			 						# 监控密码
+    monitor_username="proxy.monitor"                    # 监控账号
+    monitor_password="123456"                           # 监控密码
     monitor_history=600000
     monitor_connect_interval=60000
     monitor_ping_interval=10000
@@ -90,6 +90,7 @@ mysql_variables=
     sessions_sort=true
     connect_retries_on_failure=10
 }
+
 ```
 
 ##### docker run
@@ -276,7 +277,7 @@ save mysql variables to disk;
 创建 `proxysql-1`, `proxysql-2` 的工作目录
 
 ``` powershell
-$ mkdir -p $PROXYSQL_HOME/proxysql{-1, -2}/conf
+$ mkdir -p $PROXYSQL_HOME/proxysql-{1, 2}/conf
 ```
 
 - proxysql-1
@@ -416,13 +417,13 @@ proxysql_servers =
 # 拷贝进剪切板
 $ pbcopy < proxysql.cnf
 # 粘贴文件到 proxysql-1/conf/proxysql.cnf，redis-2/conf/proxysql.cnf，redis3/conf/proxysql.cnf
-$ pbpaste > $PROXYSQL_HOME/proxysql{-1, -2}/conf/sentinel.cnf
+$ pbpaste > $PROXYSQL_HOME/proxysql-{1, 2}/conf/sentinel.cnf
 ```
 
 然后删除旧 `proxysql.db` 数据<font color="red">（非常重要）</font>，如果不删除配置不会生效
 
 ``` powershell
-$ rmdir $PROXYSQL_HOME/proxysql{-1, -2}/data/
+$ rmdir $PROXYSQL_HOME/proxysql-{1, 2}/data/
 ```
 
 重新启动 `proxysql-1`， `proxysql-2`
