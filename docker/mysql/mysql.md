@@ -143,7 +143,7 @@ PRIVILEGES;
 创建 mysql-1, mysql-2, mysql-3 的工作目录
 
 ``` powershell
-$ mkdir -p $MYSQL_HOME/mysql{-1, -2, -3}/conf
+$ mkdir -p $MYSQL_HOME/mysql-{1, 2, 3}/conf
 ```
 
 - mysql-1
