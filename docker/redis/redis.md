@@ -194,10 +194,10 @@ protected-mode no
   
   # 开启复制
   # replicaof 172.17.0.2 6379
-  ```
+```
 
   启动
-  
+
   ``` powershell
 $ docker run \
   -itd \
@@ -212,7 +212,7 @@ $ docker run \
   --network canary-net \
   redis redis-server /etc/redis/redis.conf --replicaof redis-1 6379
   ```
-  
+
 - redis-3
   
   编写配置
@@ -477,8 +477,8 @@ user default on nopass sanitize-payload ~* &* +@all
   --privileged=true \
   --network canary-net \
 redis redis-sentinel /etc/redis/sentinel.conf
-	 ```
-	 
+	```
+	
 - sentinel-3
 	
   ``` powershell
@@ -766,7 +766,7 @@ spring:
 
 
 
-###### Springboot 制作 Dokcerfile
+###### springboot 项目布署
 
 ``` powershell
 FROM openjdk:17-jdk
